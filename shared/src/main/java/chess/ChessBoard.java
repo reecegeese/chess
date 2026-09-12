@@ -10,7 +10,6 @@ import static chess.ChessGame.TeamColor.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    //private final?
     private ChessPiece[][] boardArray = new ChessPiece[8][8];
     ChessPiece.PieceType[] backRowOrderWhite = {
             ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
@@ -30,7 +29,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        boardArray[position.getRow()][position.getColumn()] = piece;
+        boardArray[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -41,7 +40,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return boardArray[position.getRow()][position.getColumn()];
+        return boardArray[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
