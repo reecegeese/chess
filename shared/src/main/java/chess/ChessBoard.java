@@ -19,7 +19,7 @@ public class ChessBoard {
     };
 
     public ChessBoard() {
-        resetBoard();
+        boardArray = new ChessPiece[8][8];
     }
 
     /**
