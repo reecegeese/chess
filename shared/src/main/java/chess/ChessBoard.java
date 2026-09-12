@@ -1,5 +1,8 @@
 package chess;
 
+import static chess.ChessPiece.PieceType.*;
+import static chess.ChessGame.TeamColor.*;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,9 +10,17 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
+    //private final?
+    private ChessPiece[][] boardArray = new ChessPiece[8][8];
+    ChessPiece.PieceType[] backRowOrderWhite = {
+            ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
+    };
+    ChessPiece.PieceType[] backRowOrderBlack = {
+            ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK
+    };
 
     public ChessBoard() {
-        
+        resetBoard();
     }
 
     /**
@@ -19,7 +30,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        boardArray[position.getRow()][position.getColumn()] = piece;
     }
 
     /**
@@ -30,14 +41,23 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return boardArray[position.getRow()][position.getColumn()];
     }
 
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
+
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        boardArray = new ChessPiece[8][8];
+        for (int column=1; column<8; column++) {
+            addPiece(new ChessPosition(1, column),
+                    new ChessPiece(WHITE, backRowOrderWhite[column]));
+            addPiece(new ChessPosition(2, column), new ChessPiece(WHITE, PAWN));
+            addPiece(new ChessPosition(7, column), new ChessPiece(BLACK, PAWN));
+            addPiece(new ChessPosition(8, column),
+                    new ChessPiece(BLACK, backRowOrderBlack[column]));
+        }
     }
 }
