@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import static chess.ChessPiece.PieceType.*;
 import static chess.ChessGame.TeamColor.*;
 
@@ -10,6 +13,26 @@ import static chess.ChessGame.TeamColor.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(boardArray, that.boardArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.deepHashCode(boardArray));
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" + "boardArray=" + Arrays.toString(boardArray) + '}';
+    }
+
+
     private ChessPiece[][] boardArray = new ChessPiece[8][8];
     ChessPiece.PieceType[] backRowOrderWhite = {
             ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
@@ -17,6 +40,7 @@ public class ChessBoard {
     ChessPiece.PieceType[] backRowOrderBlack = {
             ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK
     };
+
 
     public ChessBoard() {
         boardArray = new ChessPiece[8][8];
@@ -50,13 +74,13 @@ public class ChessBoard {
 
     public void resetBoard() {
         boardArray = new ChessPiece[8][8];
-        for (int column=1; column<8; column++) {
+        for (int column=1; column<=8; column++) {
             addPiece(new ChessPosition(1, column),
-                    new ChessPiece(WHITE, backRowOrderWhite[column]));
+                    new ChessPiece(WHITE, backRowOrderWhite[column-1]));
             addPiece(new ChessPosition(2, column), new ChessPiece(WHITE, PAWN));
             addPiece(new ChessPosition(7, column), new ChessPiece(BLACK, PAWN));
             addPiece(new ChessPosition(8, column),
-                    new ChessPiece(BLACK, backRowOrderBlack[column]));
+                    new ChessPiece(BLACK, backRowOrderBlack[column-1]));
         }
     }
 }

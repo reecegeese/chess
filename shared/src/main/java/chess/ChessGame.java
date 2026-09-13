@@ -9,6 +9,10 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    @Override
+    public String toString() {
+        return "ChessGame{}";
+    }
 
     public ChessGame() {
 
