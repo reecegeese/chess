@@ -76,8 +76,11 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (myPosition.getRow() == 2) {
+                    return List.of((new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null)),
+                    new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()), null));
+                }
                 return List.of(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null));
-                //return List.of(new ChessMove(new ChessPosition(4,4),new ChessPosition(5,4), null));
             }
             throw new RuntimeException("Not implemented1");
         }
