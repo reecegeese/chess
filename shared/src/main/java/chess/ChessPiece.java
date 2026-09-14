@@ -30,8 +30,8 @@ public class ChessPiece {
                 ", pieceType=" + pieceType + '}';
     }
 
-    private ChessGame.TeamColor pieceColor;
-    private ChessPiece.PieceType pieceType;
+    public ChessGame.TeamColor pieceColor;
+    public ChessPiece.PieceType pieceType;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;

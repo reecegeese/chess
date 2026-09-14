@@ -28,8 +28,8 @@ public class ChessPosition {
         return "ChessPosition{" + "row=" + row + ", column=" + column + '}';
     }
 
-    private int row;
-    private int column;
+    public int row;
+    public int column;
 
     public ChessPosition(int row, int col) {
         this.row = row;
