@@ -75,15 +75,19 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
-            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                if (myPosition.getRow() == 2) {
+            if /*White team*/ (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if /*Initial move*/ (myPosition.getRow() == 2) {
                     return List.of((new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null)),
                     new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()), null));
+                } else if /*Promotion*/ (myPosition.getRow()+1 == 8) {
+                    return List.of((new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.ROOK)),
+                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.KNIGHT)),
+                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.BISHOP)),
+                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.QUEEN)));
                 }
                 return List.of(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null));
             }
-            throw new RuntimeException("Not implemented1");
         }
-        throw new RuntimeException("Not implemented2");
+        return List.of();
     }
 }
