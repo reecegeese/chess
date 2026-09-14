@@ -75,8 +75,12 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
-            return List.of(new ChessMove(new ChessPosition(4,4),new ChessPosition(5,4), null));
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return List.of(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null));
+                //return List.of(new ChessMove(new ChessPosition(4,4),new ChessPosition(5,4), null));
+            }
+            throw new RuntimeException("Not implemented1");
         }
-        return List.of();
+        throw new RuntimeException("Not implemented2");
     }
 }
