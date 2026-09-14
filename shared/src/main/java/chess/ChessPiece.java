@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -73,21 +74,23 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        List<ChessMove> movesList = new ArrayList<>();
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
             if /*White team*/ (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                if /*Initial move*/ (myPosition.getRow() == 2) {
-                    return List.of((new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null)),
-                    new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()), null));
-                } else if /*Promotion*/ (myPosition.getRow()+1 == 8) {
-                    return List.of((new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.ROOK)),
-                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.KNIGHT)),
-                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.BISHOP)),
-                            (new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.QUEEN)));
+                if /*In bounds move*/ (myPosition.getRow() < 7) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null));
                 }
-                return List.of(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), null));
+                if /*Initial move*/ (myPosition.getRow() == 2) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()), null));
+                } else if /*Promotion*/ (myPosition.getRow() == 7) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.ROOK));
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.KNIGHT));
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.BISHOP));
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()), PieceType.QUEEN));
+                }
             }
         }
-        return List.of();
+        return movesList;
     }
 }
