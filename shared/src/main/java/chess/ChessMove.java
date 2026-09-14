@@ -12,7 +12,8 @@ public class ChessMove {
         return "ChessMove{}";
     }
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
+    public ChessMove(ChessPosition startPosition,
+                     ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
     }
 

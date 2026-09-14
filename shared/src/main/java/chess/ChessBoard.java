@@ -29,16 +29,13 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        return "ChessBoard{" + "boardArray=" + Arrays.toString(boardArray) + '}';
+        return "ChessBoard{" + "boardArray=" + Arrays.deepToString(boardArray) + '}';
     }
 
 
-    private ChessPiece[][] boardArray = new ChessPiece[8][8];
-    ChessPiece.PieceType[] backRowOrderWhite = {
+    private ChessPiece[][] boardArray;
+    ChessPiece.PieceType[] backRowOrder = {
             ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
-    };
-    ChessPiece.PieceType[] backRowOrderBlack = {
-            ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK
     };
 
 
@@ -76,11 +73,11 @@ public class ChessBoard {
         boardArray = new ChessPiece[8][8];
         for (int column=1; column<=8; column++) {
             addPiece(new ChessPosition(1, column),
-                    new ChessPiece(WHITE, backRowOrderWhite[column-1]));
+                    new ChessPiece(WHITE, backRowOrder[column-1]));
             addPiece(new ChessPosition(2, column), new ChessPiece(WHITE, PAWN));
             addPiece(new ChessPosition(7, column), new ChessPiece(BLACK, PAWN));
             addPiece(new ChessPosition(8, column),
-                    new ChessPiece(BLACK, backRowOrderBlack[column-1]));
+                    new ChessPiece(BLACK, backRowOrder[column-1]));
         }
     }
 }
