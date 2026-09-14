@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -10,19 +11,35 @@ import java.util.Collection;
  */
 public class ChessGame {
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return team == chessGame.team;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(team);
+    }
+
+    @Override
     public String toString() {
         return "ChessGame{}";
     }
 
-    public ChessGame() {
+    public TeamColor team;
 
+    public ChessGame() {
+        setTeamTurn(TeamColor.BLACK);
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return team;
     }
 
     /**
@@ -31,7 +48,11 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        if (team == TeamColor.WHITE) {
+            team = TeamColor.BLACK;
+        } else {
+            team = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -50,6 +71,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        //ChessPiece currentPiece = board.getPiece(startPosition);
+        //if (currentPiece == null) {
+        //    return null;
+        //}
         throw new RuntimeException("Not implemented");
     }
 
@@ -108,7 +133,5 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
-    }
+    public ChessBoard getBoard() { throw new RuntimeException("Not implemented"); }
 }

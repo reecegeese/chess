@@ -32,8 +32,8 @@ public class ChessBoard {
         return "ChessBoard{" + "boardArray=" + Arrays.deepToString(boardArray) + '}';
     }
 
-
-    private ChessPiece[][] boardArray;
+    //do not make static
+    public ChessPiece[][] boardArray;
     ChessPiece.PieceType[] backRowOrder = {
             ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
     };
@@ -61,6 +61,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        if (boardArray[position.getRow()-1][position.getColumn()-1] == null) {
+            return null;
+        }
         return boardArray[position.getRow()-1][position.getColumn()-1];
     }
 
