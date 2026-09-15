@@ -96,11 +96,41 @@ public class ChessPiece {
                                            List<ChessMove> movesList, ChessPiece piece,
                                            int pieceRow, int pieceColumn,
                                            ChessGame.TeamColor teamColor) {
+        for /*Bishop moving up left*/ (int n = pieceRow, j = pieceColumn; n > 1 && j < 8; n--, j++) {
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n-1,j+1)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j+1), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n-1,j+1))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j+1), null));
+                break;
+            } else /*Blocked by same color*/ {
+                break;
+            }
+        }
         for /*Bishop moving up right*/ (int n = pieceRow, j = pieceColumn; n < 8 && j < 8; n++, j++) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,j+1)) == null) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j+1), null));
             } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,j+1))).getTeamColor() != teamColor) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j+1), null));
+                break;
+            } else /*Blocked by same color*/ {
+                break;
+            }
+        }
+        for /*Bishop moving down left*/ (int n = pieceRow, j = pieceColumn; n > 1 && j > 1; n--, j--) {
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n-1,j-1)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j-1), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n-1,j-1))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j-1), null));
+                break;
+            } else /*Blocked by same color*/ {
+                break;
+            }
+        }
+        for /*Bishop moving down right*/ (int n = pieceRow, j = pieceColumn; n < 8 && j > 1; n++, j--) {
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,j-1)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j-1), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,j-1))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j-1), null));
                 break;
             } else /*Blocked by same color*/ {
                 break;
