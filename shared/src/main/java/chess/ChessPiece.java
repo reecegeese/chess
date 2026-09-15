@@ -79,6 +79,14 @@ public class ChessPiece {
         List<ChessMove> movesList = new ArrayList<>();
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
+            pawnMoves(board, myPosition, movesList, piece);
+        }
+        return movesList;
+    }
+
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition,
+                                           List<ChessMove> movesList, ChessPiece piece) {
+        if (piece.getPieceType() == PieceType.PAWN) {
             if /*White team*/ (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 if /*In bounds move*/ (myPosition.getRow() < 7) {
                     if /*Not blocked*/ (board.getPiece(new ChessPosition(myPosition.getRow()+1,myPosition.getColumn())) == null) {
@@ -87,7 +95,7 @@ public class ChessPiece {
                 }
                 if /*Initial move*/ (myPosition.getRow() == 2) {
                     if /*Not blocked*/ (board.getPiece(new ChessPosition(myPosition.getRow()+1,myPosition.getColumn())) == null
-                                        && board.getPiece(new ChessPosition(myPosition.getRow()+2,myPosition.getColumn())) == null) {
+                            && board.getPiece(new ChessPosition(myPosition.getRow()+2,myPosition.getColumn())) == null) {
                         movesList.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()), null));
                     }
                 } else if /*Promotion*/ (myPosition.getRow() == 7) {
