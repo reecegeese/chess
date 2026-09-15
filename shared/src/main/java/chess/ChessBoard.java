@@ -61,7 +61,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (boardArray[position.getRow()-1][position.getColumn()-1] == null) {
+        if (boardArray[position.getRow()-1][position.getColumn()-1] == null ||
+                position.getRow()-1 < 1 || position.getRow()-1 > 8 ||
+                position.getColumn()-1 < 1 || position.getColumn()-1 > 8) {
             return null;
         }
         return boardArray[position.getRow()-1][position.getColumn()-1];
