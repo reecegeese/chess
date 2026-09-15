@@ -123,7 +123,7 @@ public class ChessPiece {
                 }
             }
         }
-        if /*Knight can go down*/ (pieceRow > 1) {
+        if /*Knight can go down*/ (pieceRow > 2) {
             if /*Down, then left*/ (pieceColumn > 1) {
                 if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn-1)) == null
                         || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn-1))).getTeamColor() != teamColor) {
