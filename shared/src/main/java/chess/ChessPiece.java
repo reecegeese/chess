@@ -86,6 +86,27 @@ public class ChessPiece {
             pawnMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
         } else if (pieceType == PieceType.ROOK) {
             rookMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
+        } else if (pieceType == PieceType.BISHOP) {
+            bishopMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
+        }
+        return movesList;
+    }
+
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition,
+                                           List<ChessMove> movesList, ChessPiece piece,
+                                           int pieceRow, int pieceColumn,
+                                           ChessGame.TeamColor teamColor) {
+        int columnOffset = 0;
+        for /*Bishop moving up right*/ (int n = pieceRow; n < 8; n++) {
+            columnOffset++;
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,pieceColumn+columnOffset)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+columnOffset), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,pieceColumn+columnOffset))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+columnOffset), null));
+                break;
+            } else /*Blocked by same color*/ {
+                break;
+            }
         }
         return movesList;
     }
@@ -95,10 +116,10 @@ public class ChessPiece {
                                            int pieceRow, int pieceColumn,
                                            ChessGame.TeamColor teamColor) {
         for /*Rook moving up*/ (int n = pieceRow; n < 8; n++) {
-            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,pieceColumn)) == null) {
-                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
-            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,pieceColumn))).getTeamColor() != teamColor) {
-                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,pieceColumn+1)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+1), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,pieceColumn+1))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+1), null));
                 break;
             } else /*Blocked by same color*/ {
                 break;
