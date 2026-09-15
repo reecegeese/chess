@@ -96,13 +96,11 @@ public class ChessPiece {
                                            List<ChessMove> movesList, ChessPiece piece,
                                            int pieceRow, int pieceColumn,
                                            ChessGame.TeamColor teamColor) {
-        int columnOffset = 0;
-        for /*Bishop moving up right*/ (int n = pieceRow; n < 8; n++) {
-            columnOffset++;
-            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,pieceColumn+columnOffset)) == null) {
-                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+columnOffset), null));
-            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,pieceColumn+columnOffset))).getTeamColor() != teamColor) {
-                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn+columnOffset), null));
+        for /*Bishop moving up right*/ (int n = pieceRow, j = pieceColumn; n < 8 && j < 8; n++, j++) {
+            if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,j+1)) == null) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j+1), null));
+            } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,j+1))).getTeamColor() != teamColor) {
+                movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,j+1), null));
                 break;
             } else /*Blocked by same color*/ {
                 break;
