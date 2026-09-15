@@ -99,6 +99,7 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
             } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n+1,pieceColumn))).getTeamColor() != teamColor) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
+                break;
             } else /*Blocked by same color*/ {
                 break;
             }
@@ -108,6 +109,7 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,pieceColumn), null));
             } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(n-1,pieceColumn))).getTeamColor() != teamColor) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,pieceColumn), null));
+                break;
             } else /*Blocked by same color*/ {
                 break;
             }
@@ -117,6 +119,7 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow,n+1), null));
             } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(pieceRow,n+1))).getTeamColor() != teamColor) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow,n+1), null));
+                break;
             } else /*Blocked by same color*/ {
                 break;
             }
@@ -126,6 +129,7 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow,n-1), null));
             } else if /*Blocked by opposite color*/ ((board.getPiece(new ChessPosition(pieceRow,n-1))).getTeamColor() != teamColor) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow,n-1), null));
+                break;
             } else /*Blocked by same color*/ {
                 break;
             }
