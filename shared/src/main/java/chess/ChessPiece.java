@@ -82,23 +82,96 @@ public class ChessPiece {
         int pieceRow = myPosition.getRow();
         int pieceColumn = myPosition.getColumn();
         ChessGame.TeamColor teamColor = piece.getTeamColor();
+        boolean isKing = false;
         if (pieceType == PieceType.PAWN) {
             pawnMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
         } else if (pieceType == PieceType.ROOK) {
-            rookMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
+            rookMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
+        } else if (pieceType == PieceType.KNIGHT) {
+            knightMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor);
         } else if (pieceType == PieceType.BISHOP) {
-            bishopMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
+            bishopMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
         } else if (pieceType == PieceType.QUEEN) {
-            rookMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
-            bishopMoves(board, myPosition, movesList, piece, pieceRow, pieceColumn, teamColor);
+            rookMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
+            bishopMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
+        } else if (pieceType == PieceType.KING) {
+            isKing = true;
+            rookMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
+            bishopMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
+            isKing = false;
+        } else {
+
+        }
+        return movesList;
+    }
+
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition,
+                                             List<ChessMove> movesList,
+                                             int pieceRow, int pieceColumn,
+                                             ChessGame.TeamColor teamColor) {
+        if /*Knight can go up*/ (pieceRow < 7) {
+            if /*Up, then left*/ (pieceColumn > 1) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+2,pieceColumn-1)) == null
+                || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow+2,pieceColumn-1))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+2,pieceColumn-1), null));
+                }
+            }
+            if /*Up, then right*/ (pieceColumn < 8) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+2,pieceColumn+1)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow+2,pieceColumn+1))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+2,pieceColumn+1), null));
+                }
+            }
+        }
+        if /*Knight can go down*/ (pieceRow > 1) {
+            if /*Down, then left*/ (pieceColumn > 1) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn-1)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn-1))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow-2,pieceColumn-1), null));
+                }
+            }
+            if /*Down, then right*/ (pieceColumn < 8) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn+1)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow-2,pieceColumn+1))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow-2,pieceColumn+1), null));
+                }
+            }
+        }
+        if /*Knight can go left*/ (pieceColumn > 2) {
+            if /*Left, then up*/ (pieceRow < 8) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn-2)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn-2))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn-2), null));
+                }
+            }
+            if /*Left, then down*/ (pieceRow > 1) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn-2)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn-2))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow-1,pieceColumn-2), null));
+                }
+            }
+        }
+        if /*Knight can go right*/ (pieceColumn < 7) {
+            if /*Right, then up*/ (pieceRow < 8) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn+2)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn+2))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn+2), null));
+                }
+            }
+            if /*Right, then down*/ (pieceRow > 1) {
+                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn+2)) == null
+                        || /*Blocked by opposite color*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn+2))).getTeamColor() != teamColor) {
+                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow-1,pieceColumn+2), null));
+                }
+            }
         }
         return movesList;
     }
 
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition,
-                                           List<ChessMove> movesList, ChessPiece piece,
+                                           List<ChessMove> movesList,
                                            int pieceRow, int pieceColumn,
-                                           ChessGame.TeamColor teamColor) {
+                                           ChessGame.TeamColor teamColor, boolean isKing) {
         for /*Bishop moving up left*/ (int n = pieceRow, j = pieceColumn; n > 1 && j < 8; n--, j++) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(n-1,j+1)) == null) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j+1), null));
@@ -106,6 +179,9 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j+1), null));
                 break;
             } else /*Blocked by same color*/ {
+                break;
+            }
+            if (isKing) {
                 break;
             }
         }
@@ -118,6 +194,9 @@ public class ChessPiece {
             } else /*Blocked by same color*/ {
                 break;
             }
+            if (isKing) {
+                break;
+            }
         }
         for /*Bishop moving down left*/ (int n = pieceRow, j = pieceColumn; n > 1 && j > 1; n--, j--) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(n-1,j-1)) == null) {
@@ -126,6 +205,9 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n-1,j-1), null));
                 break;
             } else /*Blocked by same color*/ {
+                break;
+            }
+            if (isKing) {
                 break;
             }
         }
@@ -138,14 +220,17 @@ public class ChessPiece {
             } else /*Blocked by same color*/ {
                 break;
             }
+            if (isKing) {
+                break;
+            }
         }
         return movesList;
     }
 
     public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition,
-                                           List<ChessMove> movesList, ChessPiece piece,
+                                           List<ChessMove> movesList,
                                            int pieceRow, int pieceColumn,
-                                           ChessGame.TeamColor teamColor) {
+                                           ChessGame.TeamColor teamColor, boolean isKing) {
         for /*Rook moving up*/ (int n = pieceRow; n < 8; n++) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(n+1,pieceColumn)) == null) {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
@@ -153,6 +238,9 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(n+1,pieceColumn), null));
                 break;
             } else /*Blocked by same color*/ {
+                break;
+            }
+            if (isKing) {
                 break;
             }
         }
@@ -165,6 +253,9 @@ public class ChessPiece {
             } else /*Blocked by same color*/ {
                 break;
             }
+            if (isKing) {
+                break;
+            }
         }
         for /*Rook moving right*/ (int n = pieceColumn; n < 8; n++) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow,n+1)) == null) {
@@ -175,6 +266,9 @@ public class ChessPiece {
             } else /*Blocked by same color*/ {
                 break;
             }
+            if (isKing) {
+                break;
+            }
         }
         for /*Rook moving left*/ (int n = pieceColumn; n > 1; n--) {
             if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow,n-1)) == null) {
@@ -183,6 +277,9 @@ public class ChessPiece {
                 movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow,n-1), null));
                 break;
             } else /*Blocked by same color*/ {
+                break;
+            }
+            if (isKing) {
                 break;
             }
         }
