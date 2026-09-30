@@ -30,6 +30,7 @@ public class ChessGame {
     }
 
     public TeamColor team;
+    public ChessBoard board;
 
     public ChessGame() {
         setTeamTurn(TeamColor.BLACK);
@@ -71,11 +72,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //ChessPiece piece = board.getPiece(startPosition);
-        //if (currentPiece == null) {
-        //    return null;
-        //}
-        throw new RuntimeException("Not implemented");
+        if (board.getPiece(startPosition) == null) {
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -133,5 +133,5 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() { throw new RuntimeException("Not implemented"); }
+    public ChessBoard getBoard() { return board; }
 }

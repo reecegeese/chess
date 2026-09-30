@@ -98,7 +98,6 @@ public class ChessPiece {
             isKing = true;
             rookMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
             bishopMoves(board, myPosition, movesList, pieceRow, pieceColumn, teamColor, isKing);
-            isKing = false;
         } else {
             throw new Error("Invalid piece type");
         }
