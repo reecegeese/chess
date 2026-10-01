@@ -3,6 +3,9 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
+import static chess.ChessPiece.PieceType.*;
+import static chess.ChessGame.TeamColor.*;
+
 /**
  * A class that can manage a chess game, making moves on a board
  * <p>
@@ -121,7 +124,9 @@ public class ChessGame {
     //Boolean for if the given piece can be taken
     public boolean canBeTaken(TeamColor teamColor, ChessPosition myPosition) {
         //Check every square on the board
+        //i is row
         for (int i=1; i<9; i++) {
+            //j is column
             for (int j=1; j<9; j++) {
                 ChessPosition enemyPosition = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(enemyPosition);
@@ -129,6 +134,32 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = validMoves(enemyPosition);
+                    //If piece enemy is a pawn
+                    if (piece.getPieceType() == PAWN) {
+                        int enemyRow = enemyPosition.getRow();
+                        int enemyColumn = enemyPosition.getColumn();
+                        //Enemy is a black pawn
+                        if (teamColor == WHITE) {
+                            //Pawn can take myPosition by going down left
+                            if (i > 2 && j > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
+                                return true;
+                            }
+                            //Pawn can take myPosition by going down right
+                            if (i > 2 && j < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
+                                return true;
+                            }
+                            //Enemy is a white pawn
+                        } else {
+                            //Pawn can take myPosition by going up left
+                            if (i < 8 && j > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
+                                return true;
+                            }
+                            //Pawn can take myPosition by going up right
+                            if (i < 8 && j < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
+                                return true;
+                            }
+                        }
+                    }
                     //Check all enemy moves
                     for (ChessMove move : possibleMoves) {
                         ChessPosition endPosition = move.getEndPosition();
@@ -194,6 +225,7 @@ public class ChessGame {
             }
             //If left is in bounds and safe
             if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn-1))) {
+                //Pawn does not trigger unsafe square
                 return false;
             }
             //If right is in bounds and safe
