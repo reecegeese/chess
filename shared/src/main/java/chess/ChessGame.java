@@ -151,7 +151,37 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("isInCheckmate not implemented");
+        if (isInCheck(teamColor)) {
+            ChessPosition kingPosition = findKing(teamColor);
+            int kingRow = kingPosition.getRow();
+            int kingColumn = kingPosition.getColumn();
+            boolean kingCanUp = false;
+            boolean kingCanDown = false;
+            boolean kingCanRight = false;
+            boolean kingCanLeft = false;
+            if (kingRow < 8) {kingCanUp = true;}
+            if (kingRow > 1) {kingCanDown = true;}
+            if (kingColumn < 8) {kingCanRight = true;}
+            if (kingColumn > 1) {kingCanLeft = true;}
+            //If down is in bounds and safe
+            if (kingCanDown && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn))) {
+                return false;
+            }
+            //If up is in bounds and safe
+            if (kingCanUp && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn))) {
+                return false;
+            }
+            //If left is in bounds and safe
+            if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn-1))) {
+                return false;
+            }
+            //If right is in bounds and safe
+            if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn+1))) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
