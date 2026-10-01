@@ -1,8 +1,6 @@
 package chess;
 
 import java.util.Collection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -163,13 +161,35 @@ public class ChessGame {
             if (kingRow > 1) {kingCanDown = true;}
             if (kingColumn < 8) {kingCanRight = true;}
             if (kingColumn > 1) {kingCanLeft = true;}
-            //If down is in bounds and safe
-            if (kingCanDown && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn))) {
-                return false;
+            //If down is in bounds
+            if (kingCanDown) {
+                //If down is safe
+                if (!canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn))) {
+                    return false;
+                }
+                //If down left is in bounds and safe
+                if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn-1))) {
+                    return false;
+                }
+                //If down right is in bounds and safe
+                if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn+1))) {
+                    return false;
+                }
             }
-            //If up is in bounds and safe
-            if (kingCanUp && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn))) {
-                return false;
+            //If up is in bounds
+            if (kingCanUp) {
+                //If up is safe
+                if (!canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn))) {
+                    return false;
+                }
+                //If up left is in bounds and safe
+                if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn-1))) {
+                    return false;
+                }
+                //If up right is in bounds and safe
+                if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn+1))) {
+                    return false;
+                }
             }
             //If left is in bounds and safe
             if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn-1))) {
@@ -179,8 +199,10 @@ public class ChessGame {
             if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn+1))) {
                 return false;
             }
+            //If no moves in bounds are safe, return isInCheckmate true
             return true;
         }
+        //If not in check, return false
         return false;
     }
 
