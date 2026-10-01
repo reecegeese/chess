@@ -128,7 +128,7 @@ public class ChessGame {
                 ChessPosition enemyPosition = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(enemyPosition);
                 //If piece is an opponent
-                if (piece.getTeamColor() != teamColor) {
+                if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = validMoves(enemyPosition);
                     //Check all enemy moves
