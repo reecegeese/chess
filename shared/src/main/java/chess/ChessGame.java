@@ -130,9 +130,10 @@ public class ChessGame {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = validMoves(enemyPosition);
                     //Check all enemy moves
-                    for (ChessMove position : possibleMoves) {
+                    for (ChessMove move : possibleMoves) {
+                        ChessPosition endPosition = move.getEndPosition();
                         //If opponent can take my piece
-                        if (Objects.equals(enemyPosition, myPosition)) {
+                        if (Objects.equals(endPosition, myPosition)) {
                             return true;
                         }
                     }
