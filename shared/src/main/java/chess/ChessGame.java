@@ -84,12 +84,20 @@ public class ChessGame {
             return null;
         }
         ChessPiece piece = board.getPiece(startPosition);
+        TeamColor teamColor = piece.getTeamColor();
         //Copy board
         ChessBoard boardCopy = new ChessBoard(board);
         Collection<ChessMove> possibleMoves = validMoves(startPosition);
         //Check all moves
         for (ChessMove move : possibleMoves) {
+            //Applies move to boardCopy
+            ChessPosition endPosition = move.getEndPosition();
+            boardCopy.addPiece(endPosition, piece);
+            boardCopy.removePiece(startPosition);
+            //If in check after move
+            if (isInCheckCopy(teamColor, boardCopy)) {
 
+            }
         }
         return piece.pieceMoves(board, startPosition);
     }
@@ -117,8 +125,29 @@ public class ChessGame {
         return canBeTaken(teamColor, kingPosition);
     }
 
+    public boolean isInCheckCopy(TeamColor teamColor, ChessBoard board) {
+        //Find king
+        ChessPosition kingPosition = findKingCopy(teamColor, board);
+        //Can the king be taken?
+        return canBeTaken(teamColor, kingPosition);
+    }
+
     //Find the king of the specified color
     public ChessPosition findKing(TeamColor teamColor) {
+        for (int row=1; row<9; row++) {
+            for (int column=1; column<9; column++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING
+                        && piece.getTeamColor() == teamColor) {
+                    return new ChessPosition(row, column);
+                }
+            }
+        }
+        throw new Error("King not found");
+    }
+
+    //Find the king of the specified color in boardCopy
+    public ChessPosition findKingCopy(TeamColor teamColor, ChessBoard board) {
         for (int row=1; row<9; row++) {
             for (int column=1; column<9; column++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, column));
