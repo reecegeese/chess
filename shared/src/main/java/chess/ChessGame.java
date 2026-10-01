@@ -2,6 +2,9 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static chess.ChessPiece.PieceType.*;
 import static chess.ChessGame.TeamColor.*;
@@ -81,6 +84,13 @@ public class ChessGame {
             return null;
         }
         ChessPiece piece = board.getPiece(startPosition);
+        //Copy board
+        ChessBoard boardCopy = new ChessBoard(board);
+        Collection<ChessMove> possibleMoves = validMoves(startPosition);
+        //Check all moves
+        for (ChessMove move : possibleMoves) {
+
+        }
         return piece.pieceMoves(board, startPosition);
     }
 
@@ -109,12 +119,12 @@ public class ChessGame {
 
     //Find the king of the specified color
     public ChessPosition findKing(TeamColor teamColor) {
-        for (int i=1; i<9; i++) {
-            for (int j=1; j<9; j++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+        for (int row=1; row<9; row++) {
+            for (int column=1; column<9; column++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
                 if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING
                         && piece.getTeamColor() == teamColor) {
-                    return new ChessPosition(i, j);
+                    return new ChessPosition(row, column);
                 }
             }
         }
@@ -124,11 +134,9 @@ public class ChessGame {
     //Boolean for if the given piece can be taken
     public boolean canBeTaken(TeamColor teamColor, ChessPosition myPosition) {
         //Check every square on the board
-        //i is row
-        for (int i=1; i<9; i++) {
-            //j is column
-            for (int j=1; j<9; j++) {
-                ChessPosition enemyPosition = new ChessPosition(i, j);
+        for (int row=1; row<9; row++) {
+            for (int column=1; column<9; column++) {
+                ChessPosition enemyPosition = new ChessPosition(row, column);
                 ChessPiece piece = board.getPiece(enemyPosition);
                 //If piece is an opponent
                 if (piece != null && piece.getTeamColor() != teamColor) {
@@ -141,21 +149,21 @@ public class ChessGame {
                         //Enemy is a black pawn
                         if (teamColor == WHITE) {
                             //Pawn can take myPosition by going down left
-                            if (i > 2 && j > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
+                            if (row > 2 && column > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
                                 return true;
                             }
                             //Pawn can take myPosition by going down right
-                            if (i > 2 && j < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
+                            if (row > 2 && column < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
                                 return true;
                             }
                             //Enemy is a white pawn
                         } else {
                             //Pawn can take myPosition by going up left
-                            if (i < 8 && j > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
+                            if (row < 8 && column > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
                                 return true;
                             }
                             //Pawn can take myPosition by going up right
-                            if (i < 8 && j < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
+                            if (row < 8 && column < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
                                 return true;
                             }
                         }
@@ -201,6 +209,7 @@ public class ChessGame {
                 }
                 //If down left is in bounds and safe
                 if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn-1))) {
+                    //This is the error
                     return false;
                 }
                 //If down right is in bounds and safe
@@ -225,7 +234,6 @@ public class ChessGame {
             }
             //If left is in bounds and safe
             if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn-1))) {
-                //Pawn does not trigger unsafe square
                 return false;
             }
             //If right is in bounds and safe

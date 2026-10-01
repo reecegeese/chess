@@ -43,6 +43,15 @@ public class ChessBoard {
         boardArray = new ChessPiece[8][8];
     }
 
+    //Copy constructor
+    public ChessBoard(ChessBoard other) {
+        for (int row=0; row<8; row++) {
+            for (int column=0; column<8; column++) {
+                this.boardArray[row][column] = other.boardArray[row][column];
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -51,6 +60,10 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         boardArray[position.getRow()-1][position.getColumn()-1] = piece;
+    }
+
+    public void removePiece(ChessPosition position) {
+        boardArray[position.getRow()-1][position.getColumn()-1] = null;
     }
 
     /**
