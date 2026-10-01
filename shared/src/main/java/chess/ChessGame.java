@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -77,7 +78,8 @@ public class ChessGame {
         if (board.getPiece(startPosition) == null) {
             return null;
         }
-        return null;
+        ChessPiece piece = board.getPiece(startPosition);
+        return piece.pieceMoves(board, startPosition);
     }
 
     /**
