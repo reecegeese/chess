@@ -38,13 +38,13 @@ public class ChessBoard {
             ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
     };
 
-
     public ChessBoard() {
         boardArray = new ChessPiece[8][8];
     }
 
     //Copy constructor
     public ChessBoard(ChessBoard other) {
+        boardArray = new ChessPiece[8][8];
         for (int row=0; row<8; row++) {
             for (int column=0; column<8; column++) {
                 this.boardArray[row][column] = other.boardArray[row][column];

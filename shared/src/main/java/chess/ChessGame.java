@@ -87,7 +87,7 @@ public class ChessGame {
         TeamColor teamColor = piece.getTeamColor();
         //Copy board
         ChessBoard boardCopy = new ChessBoard(board);
-        Collection<ChessMove> possibleMoves = validMoves(startPosition);
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
         //Check all moves
         for (ChessMove move : possibleMoves) {
             //Applies move to boardCopy
@@ -170,7 +170,7 @@ public class ChessGame {
                 //If piece is an opponent
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
-                    Collection<ChessMove> possibleMoves = validMoves(enemyPosition);
+                    Collection<ChessMove> possibleMoves = piece.pieceMoves(board, enemyPosition);
                     //If piece enemy is a pawn
                     if (piece.getPieceType() == PAWN) {
                         int enemyRow = enemyPosition.getRow();
