@@ -310,57 +310,23 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
-            ChessPosition kingPosition = findKing(teamColor);
-            int kingRow = kingPosition.getRow();
-            int kingColumn = kingPosition.getColumn();
-            boolean kingCanUp = false;
-            boolean kingCanDown = false;
-            boolean kingCanRight = false;
-            boolean kingCanLeft = false;
-            if (kingRow < 8) {kingCanUp = true;}
-            if (kingRow > 1) {kingCanDown = true;}
-            if (kingColumn < 8) {kingCanRight = true;}
-            if (kingColumn > 1) {kingCanLeft = true;}
-            //If down is in bounds
-            if (kingCanDown) {
-                //If down is safe
-                if (!canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn))) {
-                    return false;
-                }
-                //If down left is in bounds and safe
-                if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn-1))) {
-                    //This is the error
-                    return false;
-                }
-                //If down right is in bounds and safe
-                if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow-1, kingColumn+1))) {
-                    return false;
+            //Check every square on the board
+            for (int row=1; row<9; row++) {
+                for (int column=1; column<9; column++) {
+                    ChessPosition position = new ChessPosition(row, column);
+                    ChessPiece piece = board.getPiece(position);
+                    //If piece exists and is an ally
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        //Get all of ally's moves
+                        Collection<ChessMove> legalMoves = validMoves(position);
+                        //If there is any legal move, not in checkmate
+                        if (!legalMoves.isEmpty()) {
+                            return false;
+                        }
+                    }
                 }
             }
-            //If up is in bounds
-            if (kingCanUp) {
-                //If up is safe
-                if (!canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn))) {
-                    return false;
-                }
-                //If up left is in bounds and safe
-                if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn-1))) {
-                    return false;
-                }
-                //If up right is in bounds and safe
-                if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow+1, kingColumn+1))) {
-                    return false;
-                }
-            }
-            //If left is in bounds and safe
-            if (kingCanLeft && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn-1))) {
-                return false;
-            }
-            //If right is in bounds and safe
-            if (kingCanRight && !canBeTaken(teamColor, new ChessPosition(kingRow, kingColumn+1))) {
-                return false;
-            }
-            //If no moves in bounds are safe, return isInCheckmate true
+            //No legal moves for any piece means checkmate
             return true;
         }
         //If not in check, return false
@@ -378,7 +344,28 @@ public class ChessGame {
     If no valid moves for teamColor and NOT in check, stalemate
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("isInStalemate not implemented");
+        if (!isInCheck(teamColor)) {
+            //Check every square on the board
+            for (int row=1; row<9; row++) {
+                for (int column=1; column<9; column++) {
+                    ChessPosition position = new ChessPosition(row, column);
+                    ChessPiece piece = board.getPiece(position);
+                    //If piece exists and is an ally
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        //Get all of ally's moves
+                        Collection<ChessMove> legalMoves = validMoves(position);
+                        //If there is any legal move, not in stalemate
+                        if (!legalMoves.isEmpty()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            //No legal moves for any piece while not in check means stalemate
+            return true;
+        }
+        //If in check, return false
+        return false;
     }
 
     /**
