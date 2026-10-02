@@ -115,14 +115,26 @@ public class ChessGame {
         //Get all valid moves for piece
         Collection<ChessMove> legalMoves = validMoves(new ChessPosition(startPosition.getRow(), startPosition.getColumn()));
         ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn()));
+        if (legalMoves == null) {
+            throw new InvalidMoveException("Move is not valid");
+        }
         //For every valid move
         for (ChessMove legalMove : legalMoves) {
-            //If current move is a valid move
-            if (Objects.equals(legalMove, move)) {
+            TeamColor teamColor = piece.getTeamColor();
+            TeamColor teamTurn = getTeamTurn();
+            //Piece exists, the current move is a valid move, and it is the correct team's turn
+            if (Objects.equals(legalMove, move)
+                    && teamColor == teamTurn) {
                 //Execute move
                 board.addPiece(endPosition, piece);
                 board.removePiece(startPosition);
-                break;
+                //Change team turn to other color
+                if (teamColor == WHITE) {
+                    setTeamTurn(BLACK);
+                } else {
+                    setTeamTurn(WHITE);
+                }
+                return;
             }
         }
         //If move is not valid throw error
