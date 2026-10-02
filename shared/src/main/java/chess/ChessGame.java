@@ -217,6 +217,9 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+    /*Call valid moves on all pieces of teamColor
+    If no valid moves for teamColor, teamCOlor is in checkmate
+     */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
             ChessPosition kingPosition = findKing(teamColor);
@@ -282,6 +285,9 @@ public class ChessGame {
      *
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
+     */
+    /*Call valid moves on all pieces of teamColor
+    If no valid moves for teamColor and NOT in check, stalemate
      */
     public boolean isInStalemate(TeamColor teamColor) {
         throw new RuntimeException("isInStalemate not implemented");
