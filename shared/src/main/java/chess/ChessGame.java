@@ -85,21 +85,22 @@ public class ChessGame {
         }
         ChessPiece piece = board.getPiece(startPosition);
         TeamColor teamColor = piece.getTeamColor();
-        //Copy board
-        ChessBoard boardCopy = new ChessBoard(board);
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> legalMoves = new ArrayList<>();
         //Check all moves
         for (ChessMove move : possibleMoves) {
+            //Copy board
+            ChessBoard boardCopy = new ChessBoard(board);
             //Applies move to boardCopy
             ChessPosition endPosition = move.getEndPosition();
             boardCopy.addPiece(endPosition, piece);
             boardCopy.removePiece(startPosition);
-            //If in check after move
-            if (isInCheckCopy(teamColor, boardCopy)) {
-
+            //Move is valid if you do not end in check
+            if (!isInCheckCopy(teamColor, boardCopy)) {
+                legalMoves.add(move);
             }
         }
-        return piece.pieceMoves(board, startPosition);
+        return legalMoves;
     }
 
     /**
@@ -109,7 +110,23 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("makeMove not implemented");
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        //Get all valid moves for piece
+        Collection<ChessMove> legalMoves = validMoves(new ChessPosition(startPosition.getRow(), startPosition.getColumn()));
+        ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn()));
+        //For every valid move
+        for (ChessMove legalMove : legalMoves) {
+            //If current move is a valid move
+            if (Objects.equals(legalMove, move)) {
+                //Execute move
+                board.addPiece(endPosition, piece);
+                board.removePiece(startPosition);
+                break;
+            }
+        }
+        //If move is not valid throw error
+        throw new InvalidMoveException("Move is not valid");
     }
 
     /**
@@ -125,11 +142,11 @@ public class ChessGame {
         return canBeTaken(teamColor, kingPosition);
     }
 
-    public boolean isInCheckCopy(TeamColor teamColor, ChessBoard board) {
+    public boolean isInCheckCopy(TeamColor teamColor, ChessBoard boardCopy) {
         //Find king
-        ChessPosition kingPosition = findKingCopy(teamColor, board);
+        ChessPosition kingPosition = findKingCopy(teamColor, boardCopy);
         //Can the king be taken?
-        return canBeTaken(teamColor, kingPosition);
+        return canBeTakenCopy(teamColor, kingPosition, boardCopy);
     }
 
     //Find the king of the specified color
@@ -147,10 +164,10 @@ public class ChessGame {
     }
 
     //Find the king of the specified color in boardCopy
-    public ChessPosition findKingCopy(TeamColor teamColor, ChessBoard board) {
+    public ChessPosition findKingCopy(TeamColor teamColor, ChessBoard boardCopy) {
         for (int row=1; row<9; row++) {
             for (int column=1; column<9; column++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
+                ChessPiece piece = boardCopy.getPiece(new ChessPosition(row, column));
                 if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING
                         && piece.getTeamColor() == teamColor) {
                     return new ChessPosition(row, column);
@@ -171,6 +188,57 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(board, enemyPosition);
+                    //If piece enemy is a pawn
+                    if (piece.getPieceType() == PAWN) {
+                        int enemyRow = enemyPosition.getRow();
+                        int enemyColumn = enemyPosition.getColumn();
+                        //Enemy is a black pawn
+                        if (teamColor == WHITE) {
+                            //Pawn can take myPosition by going down left
+                            if (row > 2 && column > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
+                                return true;
+                            }
+                            //Pawn can take myPosition by going down right
+                            if (row > 2 && column < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
+                                return true;
+                            }
+                            //Enemy is a white pawn
+                        } else {
+                            //Pawn can take myPosition by going up left
+                            if (row < 8 && column > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
+                                return true;
+                            }
+                            //Pawn can take myPosition by going up right
+                            if (row < 8 && column < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
+                                return true;
+                            }
+                        }
+                    }
+                    //Check all enemy moves
+                    for (ChessMove move : possibleMoves) {
+                        ChessPosition endPosition = move.getEndPosition();
+                        //If opponent can take my piece
+                        if (Objects.equals(endPosition, myPosition)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    //Boolean for if the given piece can be taken on the copy board
+    public boolean canBeTakenCopy(TeamColor teamColor, ChessPosition myPosition, ChessBoard boardCopy) {
+        //Check every square on the board
+        for (int row=1; row<9; row++) {
+            for (int column=1; column<9; column++) {
+                ChessPosition enemyPosition = new ChessPosition(row, column);
+                ChessPiece piece = boardCopy.getPiece(enemyPosition);
+                //If piece is an opponent
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    //Get all of opponent's moves
+                    Collection<ChessMove> possibleMoves = piece.pieceMoves(boardCopy, enemyPosition);
                     //If piece enemy is a pawn
                     if (piece.getPieceType() == PAWN) {
                         int enemyRow = enemyPosition.getRow();
