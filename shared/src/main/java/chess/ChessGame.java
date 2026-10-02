@@ -2,9 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static chess.ChessPiece.PieceType.*;
 import static chess.ChessGame.TeamColor.*;
@@ -22,12 +20,12 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return team == chessGame.team;
+        return team == chessGame.team && Objects.equals(board, chessGame.board);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(team);
+        return Objects.hash(team, board);
     }
 
     @Override
