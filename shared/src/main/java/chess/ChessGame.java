@@ -126,8 +126,16 @@ public class ChessGame {
             if (Objects.equals(legalMove, move)
                     && teamColor == teamTurn) {
                 //Execute move
-                board.addPiece(endPosition, piece);
-                board.removePiece(startPosition);
+                //Is there is a promotion
+                if (move.getPromotionPiece() != null) {
+                    ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
+                    board.addPiece(endPosition, new ChessPiece (teamColor, promotionPiece));
+                    board.removePiece(startPosition);
+                    //If there is not a promotion
+                } else {
+                    board.addPiece(endPosition, piece);
+                    board.removePiece(startPosition);
+                }
                 //Change team turn to other color
                 if (teamColor == WHITE) {
                     setTeamTurn(BLACK);
