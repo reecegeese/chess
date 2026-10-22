@@ -1,15 +1,18 @@
-package AuthDataAccess;
+package dataaccess.authdataaccess;
 
-public class authDataAccess {
-    authData = [];
-    public void storeAuthData() {
-        new.authData = authData;
-        userData.add(string[unserName], string Password, string email);
+import model.AuthData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class AuthDataAccess {
+    static List<AuthData> allAuthData = new ArrayList<>();
+
+    public void addAuthData(String authToken, String username) {
+        allAuthData.add(new AuthData(authToken, username));
     }
 
-    public static void deleteuserData() {
-        for entry in userData (
-                delete userdata;
-        )
+    public static void deleteAuthData() {
+        allAuthData = new ArrayList<>();
     }
 }
