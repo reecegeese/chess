@@ -1,7 +1,9 @@
 package server;
 
 import io.javalin.*;
+import model.UserData;
 import services.DeleteService;
+import services.UserService;
 import dataaccess.authdataaccess.AuthDataAccess;
 import dataaccess.gamedataaccess.GameDataAccess;
 import dataaccess.userdataaccess.UserDataAccess;
@@ -15,6 +17,10 @@ public class Server {
 
         javalin.delete("/db", (ctx)-> {
             DeleteService.deleteService();
+        });
+
+        javalin.post("/user", (ctx)-> ctx.attribute("userData",UserData(String(username), password, email)) {
+            UserService.registerUser(username, password, email);
         });
 
         AuthDataAccess AuthDA = new AuthDataAccess();
