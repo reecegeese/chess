@@ -9,7 +9,7 @@ import java.util.List;
 public class UserDataAccess {
     static List<UserData> allUserData = new ArrayList<>();
 
-    public void addUserData(String username, String password, String email) {
+    static public void addUserData(String username, String password, String email) {
         allUserData.add(new UserData(username, password, email));
     }
 

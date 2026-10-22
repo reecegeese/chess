@@ -19,13 +19,13 @@ public class Server {
             DeleteService.deleteService();
         });
 
-        javalin.post("/user", (ctx)-> ctx.attribute("userData",UserData(String(username), password, email)) {
+        javalin.post("/user", (ctx)-> ctx.attribute("username", "password", "email") {
             UserService.registerUser(username, password, email);
         });
 
-        AuthDataAccess AuthDA = new AuthDataAccess();
-        GameDataAccess GameDA = new GameDataAccess();
-        UserDataAccess UserDA = new UserDataAccess();
+        //AuthDataAccess AuthDA = new AuthDataAccess();
+        //GameDataAccess GameDA = new GameDataAccess();
+        //UserDataAccess UserDA = new UserDataAccess();
 
         // Register your endpoints and exception handlers here.
         //ctx.attribute("auth",authData)
