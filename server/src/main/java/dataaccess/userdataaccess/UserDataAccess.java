@@ -9,15 +9,18 @@ import java.util.List;
 public class UserDataAccess {
     static List<UserData> allUserData = new ArrayList<>();
 
-    static public void addUserData(String username, String password, String email) {
-        allUserData.add(new UserData(username, password, email));
+    static public void addUserData(UserData user) {
+        allUserData.add(user);
     }
 
-    static public void findUserData(String username, String password, String email) {
-        UserData currentUser = new UserData(username, password, email);
+    static public void findUserData(UserData user) {
         for (UserData registeredUser: allUserData) {
-            if (currentUser == registeredUser) {
-                throw new AlreadyTakenException("Error: already taken");
+            try {
+                if (user == registeredUser) {
+                    throw new AlreadyTakenException("Error: already taken");
+                }
+            } catch (AlreadyTakenException e){
+                System.out.println("Exception caught: " + e.getMessage());
             }
         }
     }

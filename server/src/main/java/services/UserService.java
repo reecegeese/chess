@@ -9,16 +9,21 @@ import model.AuthData;
 
 public class UserService {
 
-    public static AuthData registerUser(String username, String password, String email) {
-        try {
-            UserDataAccess.findUserData(username, password, email);
-        } catch (AlreadyTakenException e){
-            System.out.println("Exception caught: " + e.getMessage());
-        }
-        UserDataAccess.addUserData(username, password, email);
+    public static String registerUser(UserData user) {
+        UserDataAccess.findUserData(user);
+        UserDataAccess.addUserData(user);
         String authToken = AuthDataAccess.createAuthToken();
-        AuthDataAccess.addAuthData(authToken, username);
-        return new AuthData(authToken, username);
+        String currentUsername = user.username();
+        AuthDataAccess.addAuthData(authToken, currentUsername);
+        return "\"" + currentUsername + "\"\":\"\", \"" + authToken + "\":\"\"";
+    }
+
+    public static String loginUser(UserData user) {
+        UserDataAccess.findUserData(user);
+        String authToken = AuthDataAccess.createAuthToken();
+        String currentUsername = user.username();
+        AuthDataAccess.addAuthData(authToken, currentUsername);
+        return "\"" + currentUsername + "\"\":\"\", \"" + authToken + "\":\"\"";
     }
 
     //public RegisterResult register(RegisterRequest registerRequest) {}

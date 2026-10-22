@@ -1,7 +1,9 @@
 package server;
 
 import io.javalin.*;
+import model.AuthData;
 import model.UserData;
+import com.google.gson.Gson;
 import services.DeleteService;
 import services.UserService;
 import dataaccess.authdataaccess.AuthDataAccess;
@@ -12,16 +14,33 @@ public class Server {
 
     private final Javalin javalin;
 
+    private final Gson serializer = new Gson();
+
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         javalin.delete("/db", (ctx)-> {
             DeleteService.deleteService();
+            ctx.status(200);
+            ctx.result("");
         });
 
-        javalin.post("/user", (ctx)-> ctx.attribute("username", "password", "email") {
-            UserService.registerUser(username, password, email);
+        javalin.post("/user", (ctx)-> {
+            UserData user = serializer.fromJson(ctx.body(), UserData.class);
+            String newUserResult = UserService.registerUser(user);
+            ctx.status(200);
+            ctx.result(newUserResult);
         });
+
+        javalin.post("/session", (ctx)-> {
+            UserData user = serializer.fromJson(ctx.body(), UserData.class);
+            String loginResult = UserService.loginUser(user);
+            ctx.status(200);
+            ctx.result(loginResult);
+        });
+// ctx.header("authorization"),
+        //Get authToken, not AuthData
+
 
         //AuthDataAccess AuthDA = new AuthDataAccess();
         //GameDataAccess GameDA = new GameDataAccess();
