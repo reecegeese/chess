@@ -2,6 +2,8 @@ package server;
 
 import io.javalin.*;
 import services.DeleteService;
+import dataaccess.authdataaccess.AuthDataAccess;
+import dataaccess.gamedataaccess.GameDataAccess;
 import dataaccess.userdataaccess.UserDataAccess;
 
 public class Server {
@@ -15,9 +17,9 @@ public class Server {
             DeleteService.deleteService();
         });
 
+        AuthDataAccess AuthDA = new AuthDataAccess();
+        GameDataAccess GameDA = new GameDataAccess();
         UserDataAccess UserDA = new UserDataAccess();
-        //gameDataAccess GameDA = new gameDataAccess();
-        //authDataAccess AuthDA = new authDataAccess();
 
         // Register your endpoints and exception handlers here.
         //ctx.attribute("auth",authData)
