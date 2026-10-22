@@ -2,14 +2,17 @@ package dataaccess.userdataaccess;
 
 import model.UserData;
 
-public class UserDataAccess {
-    public UserData[] allUserData;
+import java.util.ArrayList;
+import java.util.List;
 
-    public void addUserData() {
-        allUserData = new UserData(String(username), String(username), String(username));
+public class UserDataAccess {
+    static List<UserData> allUserData = new ArrayList<>();
+
+    public void addUserData(String username, String password, String email) {
+        allUserData.add(new UserData(username, password, email));
     }
 
-    public void deleteUserData() {
-        allUserData = new UserData[];
+    public static void deleteUserData() {
+        allUserData = new ArrayList<>();
     }
 }

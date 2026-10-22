@@ -1,9 +1,11 @@
 package services;
 
+import dataaccess.userdataaccess.UserDataAccess;
+
 public class DeleteService {
 
     public static void deleteService() {
-        deleteUserData();
+        UserDataAccess.deleteUserData();
         //deleteGameData();
         //authdataaccess.deleteAuthData();
     }
