@@ -1,7 +1,7 @@
 package dataaccess;
 
 /**
- * Indicates there was an error connecting to the database
+ * Indicates data was already in the database
  */
 public class AlreadyTakenException extends Exception{
     public AlreadyTakenException(String message) {

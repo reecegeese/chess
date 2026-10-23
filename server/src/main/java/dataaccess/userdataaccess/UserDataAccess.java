@@ -7,25 +7,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataAccess {
+    //Database
     static List<UserData> allUserData = new ArrayList<>();
 
     static public void addUserData(UserData user) {
+        //DataAccess -> Database
         allUserData.add(user);
     }
 
-    static public void findUserData(UserData user) {
+    static public boolean findUserData(UserData user) {
+        //DataAccess -> Database
         for (UserData registeredUser: allUserData) {
-            try {
-                if (user == registeredUser) {
-                    throw new AlreadyTakenException("Error: already taken");
-                }
-            } catch (AlreadyTakenException e){
-                System.out.println("Exception caught: " + e.getMessage());
+            if (user == registeredUser) {
+                //DataAccess <- database
+                return false;
             }
         }
+        //DataAccess <- database
+        return true;
     }
 
     public static void deleteUserData() {
+        //DataAccess -> Database
         allUserData = new ArrayList<>();
     }
 }

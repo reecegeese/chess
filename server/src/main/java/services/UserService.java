@@ -9,13 +9,18 @@ import model.AuthData;
 
 public class UserService {
 
-    public static String registerUser(UserData user) {
-        UserDataAccess.findUserData(user);
-        UserDataAccess.addUserData(user);
-        String authToken = AuthDataAccess.createAuthToken();
-        String currentUsername = user.username();
-        AuthDataAccess.addAuthData(authToken, currentUsername);
-        return "\"" + currentUsername + "\"\":\"\", \"" + authToken + "\":\"\"";
+    public static String registerUser(UserData user) throws AlreadyTakenException{
+        //Service -> DataAccess
+        if (UserDataAccess.findUserData(user)) {
+            //Service -> DataAccess
+            UserDataAccess.addUserData(user);
+            String authToken = AuthDataAccess.createAuthToken();
+            String currentUsername = user.username();
+            AuthDataAccess.addAuthData(authToken, currentUsername);
+            return "\"" + currentUsername + "\"\":\"\", \"" + authToken + "\":\"\"";
+        } else {
+            throw new AlreadyTakenException("Error: already taken");
+        }
     }
 
     public static String loginUser(UserData user) {

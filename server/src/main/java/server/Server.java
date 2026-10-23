@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.AlreadyTakenException;
 import io.javalin.*;
 import model.AuthData;
 import model.UserData;
@@ -16,22 +17,35 @@ public class Server {
 
     private final Gson serializer = new Gson();
 
+
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
+        //Client -> Server
         javalin.delete("/db", (ctx)-> {
+            //Handler -> Service
             DeleteService.deleteService();
-            ctx.status(200);
-            ctx.result("");
+            // Client <- Server
+            ctx.status(200).json("", String.class);
         });
 
+        //Client -> Server
         javalin.post("/user", (ctx)-> {
+            //Server -> Handler
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
-            String newUserResult = UserService.registerUser(user);
-            ctx.status(200);
-            ctx.result(newUserResult);
+            try {
+                //Handler -> Service
+                String newUserResult = UserService.registerUser(user);
+                // Client <- Server
+                ctx.status(200).json(newUserResult, String.class);
+                ctx.result(newUserResult);
+            } catch  /*Server <- Handler*/ (AlreadyTakenException e){
+                // Client <- Server
+                ctx.status(403).json(e, String.class);
+            }
         });
 
+        //Server -> Handler
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String loginResult = UserService.loginUser(user);
