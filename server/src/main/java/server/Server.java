@@ -1,18 +1,13 @@
 package server;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
 import io.javalin.*;
-import io.javalin.json.JsonMapper;
 import model.AuthData;
 import model.UserData;
 import com.google.gson.Gson;
 import services.DeleteService;
 import services.UserService;
-import dataaccess.authdataaccess.AuthDataAccess;
-import dataaccess.gamedataaccess.GameDataAccess;
-import dataaccess.userdataaccess.UserDataAccess;
-
-import java.lang.reflect.Type;
 import java.util.Map;
 
 public class Server {
@@ -45,6 +40,10 @@ public class Server {
                 String resultJson = serializer.toJson(Map.of("username", user.username()
                         , "authToken", authToken));
                 ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));

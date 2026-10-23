@@ -1,6 +1,7 @@
 package services;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
 import dataaccess.authdataaccess.AuthDataAccess;
 import dataaccess.gamedataaccess.GameDataAccess;
 import dataaccess.userdataaccess.UserDataAccess;
@@ -9,9 +10,12 @@ import model.AuthData;
 
 public class UserService {
 
-    public static String registerUser(UserData user) throws AlreadyTakenException{
+    public static String registerUser(UserData user) throws AlreadyTakenException, BadRequestException {
         //Service -> DataAccess
         //If user is not in database
+        if (user.username() == null || user.password() == null || user.email() == null) {
+            throw new BadRequestException("Error: bad request");
+        }
         if (!UserDataAccess.findUserData(user)) {
             //Service -> DataAccess
             UserDataAccess.addUserData(user);
