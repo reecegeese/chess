@@ -13,18 +13,19 @@ public class UserDataAccess {
     static public void addUserData(UserData user) {
         //DataAccess -> Database
         allUserData.add(user);
+        System.out.println("users stored: " + allUserData);
     }
 
     static public boolean findUserData(UserData user) {
         //DataAccess -> Database
         for (UserData registeredUser: allUserData) {
-            if (user == registeredUser) {
+            if (registeredUser.username().equals(user.username())) {
                 //DataAccess <- database
-                return false;
+                return true;
             }
         }
         //DataAccess <- database
-        return true;
+        return false;
     }
 
     public static void deleteUserData() {

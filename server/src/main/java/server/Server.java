@@ -50,10 +50,7 @@ public class Server {
         //Client -> Server
         javalin.post("/user", (ctx)-> {
             //Server -> Handler
-            String body = ctx.body();
-            System.out.println("RAW BODY: " + body);
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
-            System.out.println("PARSED: " + user);
             try {
                 //Handler -> Service
                 String authToken = UserService.registerUser(user);
