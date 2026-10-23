@@ -13,7 +13,6 @@ public class UserDataAccess {
     static public void addUserData(UserData user) {
         //DataAccess -> Database
         allUserData.add(user);
-        System.out.println("users stored: " + allUserData);
     }
 
     static public boolean findUserData(UserData user) {

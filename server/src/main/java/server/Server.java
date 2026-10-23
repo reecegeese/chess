@@ -23,28 +23,15 @@ public class Server {
 
 
     public Server() {
-        javalin = Javalin.create(config -> {
-            config.staticFiles.add("web");
-            config.jsonMapper(new JsonMapper() {
-                @Override
-                public String toJsonString(Object obj, Type type) {
-                    return serializer.toJson(obj, type);
-                }
-
-                @Override
-                public <T> T fromJsonString(String json, Type targetType) {
-                    return serializer.fromJson(json, targetType);
-                }
-            });
-
-        });
+        javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         //Client -> Server
         javalin.delete("/db", (ctx)-> {
             //Handler -> Service
             DeleteService.deleteService();
             // Client <- Server
-            ctx.status(200).json(Map.of("", String.class));
+            String resultJson = serializer.toJson(Map.of("username", String.class));
+            ctx.status(200).result(resultJson);
         });
 
         //Client -> Server
@@ -55,13 +42,13 @@ public class Server {
                 //Handler -> Service
                 String authToken = UserService.registerUser(user);
                 // Client <- Server
-                ctx.status(200).json(Map.of("username", user.username()
-                , "authToken", authToken));
+                String resultJson = serializer.toJson(Map.of("username", user.username()
+                        , "authToken", authToken));
+                ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
                 // Client <- Server
-                ctx.status(403).json(Map.of("message", "Error: already taken"));
-            } catch (Exception e) {
-                ctx.status(500).json(Map.of("message", "Error: (description of error)"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(403).result(resultJson);
             }
         });
 
