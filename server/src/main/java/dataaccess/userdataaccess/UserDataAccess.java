@@ -18,7 +18,9 @@ public class UserDataAccess {
     static public boolean findUserData(UserData user) {
         //DataAccess -> Database
         for (UserData registeredUser: allUserData) {
-            if (registeredUser.username().equals(user.username())) {
+            if (registeredUser.username().equals(user.username()) &&
+                    registeredUser.password().equals(user.password()) &&
+                    registeredUser.email().equals(user.email())) {
                 //DataAccess <- database
                 return true;
             }
