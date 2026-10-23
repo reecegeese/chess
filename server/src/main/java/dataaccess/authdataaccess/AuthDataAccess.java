@@ -17,6 +17,19 @@ public class AuthDataAccess {
         allAuthData.add(new AuthData(authToken, username));
     }
 
+    static public boolean findAuthData(AuthData user) {
+        //DataAccess -> Database
+        System.out.println("looping");
+        for (AuthData registeredAuthData: allAuthData) {
+            if (registeredAuthData.username().equals(user.username())) {
+                //DataAccess <- database
+                return true;
+            }
+        }
+        //DataAccess <- database
+        return false;
+    }
+
     public static void deleteAuthData() {
         allAuthData = new ArrayList<>();
     }

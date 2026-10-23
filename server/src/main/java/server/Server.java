@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
+import dataaccess.UnauthorizedException;
 import io.javalin.*;
 import model.AuthData;
 import model.UserData;
@@ -54,9 +55,22 @@ public class Server {
         //Server -> Handler
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
-            String loginResult = UserService.loginUser(user);
-            ctx.status(200);
-            ctx.result(loginResult);
+            try {
+                //Handler -> Service
+                String authToken = UserService.loginUser(user);
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("username", user.username()
+                        , "authToken", authToken));
+                ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(400).result(resultJson);
+            } catch  /*Server <- Handler*/ (UnauthorizedException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(401).result(resultJson);
+            }
         });
 
         //AuthDataAccess AuthDA = new AuthDataAccess();
