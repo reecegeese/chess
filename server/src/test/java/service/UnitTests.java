@@ -39,7 +39,7 @@ public class UnitTests {
     public void setup() throws BadRequestException, AlreadyTakenException {
         DeleteService.deleteService();
         //one user already logged in
-        String RegisteredUserData = UserService.registerUser(existingUser);
+        UserService.registerUser(existingUser);
     }
 
     @Test
@@ -60,6 +60,26 @@ public class UnitTests {
 
     @Test
     @Order(2)
+    @DisplayName("Normal User Login")
+    public void loginFail() throws UnauthorizedException, BadRequestException {
+        String loginResult = UserService.loginUser(existingUser);
+        String[] parts = loginResult.split(",");
+        String usernameToTrim = parts[0].trim();
+        String username = usernameToTrim.replaceAll("[\":]", "");
+        String authTokenToTrim = parts[1].trim();
+        String authToken = authTokenToTrim.replaceAll("[\":]", "");
+        String existingAuthTokenToTrim = parts[1].trim();
+        String existingAuthToken = existingAuthTokenToTrim.replaceAll("[\":]", "");
+        UnauthorizedException unauthorizedException = assertThrows(
+                UnauthorizedException.class,
+                () -> {
+                    UserService.loginUser(new UserData("IDontExist", "FakePassword", "fake@emai.com"));
+                }
+        );
+    }
+
+    @Test
+    @Order(3)
     @DisplayName("Normal Create Game")
     public void createGameSuccess() throws UnauthorizedException, BadRequestException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -74,7 +94,24 @@ public class UnitTests {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
+    @DisplayName("Bad Create Game")
+    public void createGameFail() throws UnauthorizedException, BadRequestException {
+        String loginResult = UserService.loginUser(UnitTests.existingUser);
+        String[] parts = loginResult.split(",");
+        String authTokenToTrim = parts[1].trim();
+        String authToken = authTokenToTrim.replaceAll("[\":]", "");
+        GameService.createGame("testGame", authToken);
+        BadRequestException badRequestException = assertThrows(
+                BadRequestException.class,
+                () -> {
+                    GameService.createGame(null, authToken);
+                }
+        );
+    }
+
+    @Test
+    @Order(5)
     @DisplayName("Bad Join Game")
     public void joinGameWhiteTaken() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -92,7 +129,7 @@ public class UnitTests {
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     @DisplayName("Good Join Game")
     public void joinGameSuccess() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -105,7 +142,7 @@ public class UnitTests {
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     @DisplayName("Good List Games")
     public void listGamesAuthorized() throws UnauthorizedException, BadRequestException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -116,7 +153,7 @@ public class UnitTests {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     @DisplayName("Bad List Games")
     public void listGamesUnauthorized() throws UnauthorizedException, BadRequestException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -131,7 +168,7 @@ public class UnitTests {
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     @DisplayName("Normal Logout")
     public void logoutSuccess() throws UnauthorizedException, BadRequestException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);
@@ -142,7 +179,7 @@ public class UnitTests {
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     @DisplayName("Bad Logout")
     public void logoutFail() throws UnauthorizedException, BadRequestException {
         String loginResult = UserService.loginUser(UnitTests.existingUser);

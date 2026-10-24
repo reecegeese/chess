@@ -22,19 +22,6 @@ public class AuthDataAccess {
         allAuthData.removeIf(registeredAuthData -> registeredAuthData.authToken().equals(authToken));
     }
 
-    static public boolean findAuthData(AuthData user) {
-        //DataAccess -> Database
-        for (AuthData registeredAuthData: allAuthData) {
-            if (registeredAuthData.authToken().equals(user.authToken()) &&
-                    registeredAuthData.username().equals(user.username())) {
-                //DataAccess <- database
-                return true;
-            }
-        }
-        //DataAccess <- database
-        return false;
-    }
-
     static public boolean findAuthToken(String authToken) {
         //DataAccess -> Database
         for (AuthData registeredAuthData: allAuthData) {
