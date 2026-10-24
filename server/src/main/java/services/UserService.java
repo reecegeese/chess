@@ -36,7 +36,7 @@ public class UserService {
             //Service -> DataAccess
             String authToken = AuthDataAccess.createAuthToken();
             AuthDataAccess.addAuthData(authToken, user.username());
-            return "\"" + authToken + "\"\":\"\", \"" + user.username() + "\":\"\"";
+            return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
         }
         throw new UnauthorizedException("Error: unauthorized");
     }

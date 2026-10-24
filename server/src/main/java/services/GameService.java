@@ -35,6 +35,7 @@ public class GameService {
     public static List<GameData> listGames(String authToken) throws UnauthorizedException {
         //Service -> DataAccess
         //If authToken is in database
+        System.out.println("listing games");
         if (AuthDataAccess.findAuthToken(authToken)) {
             return GameDataAccess.findAllGames();
         }
@@ -50,18 +51,20 @@ public class GameService {
             GameData gameData = GameDataAccess.getGameData(gameID);
             if (gameData != null && Objects.equals(playerColor, "WHITE")
                 && gameData.whiteUsername() != null) {
-                throw new AlreadyTakenException("Error: unauthorized");
+                throw new AlreadyTakenException("Error: already taken");
             } else if (gameData != null && Objects.equals(playerColor, "BLACK")
                     && gameData.blackUsername() != null) {
-                throw new AlreadyTakenException("Error: unauthorized");
+                throw new AlreadyTakenException("Error: already taken");
             } else if (!Objects.equals(playerColor, "WHITE") &&
                     !Objects.equals(playerColor, "BLACK")){
                 throw new BadRequestException("Error: bad request");
             }
         }
         //If authToken is in database
+        System.out.println("authorizing join game");
         if (AuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
+            System.out.println("authorized");
             GameData gameData = GameDataAccess.getGameData(gameID);
             GameDataAccess.deleteGameByID(gameID);
             if (Objects.equals(playerColor, "WHITE")) {

@@ -142,6 +142,7 @@ public class Server {
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             String header = ctx.header("authorization");
+            System.out.println("Join header: " + header);
             String[] parts = header.split(",");
             String usernameToTrim = parts[0].trim();
             String username = usernameToTrim.replaceAll("[\":]", "");
@@ -155,11 +156,11 @@ public class Server {
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
                 // Client <- Server
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 // Client <- Server
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
                 // Client <- Server

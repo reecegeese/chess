@@ -38,6 +38,7 @@ public class AuthDataAccess {
     static public boolean findAuthToken(String authToken) {
         //DataAccess -> Database
         for (AuthData registeredAuthData: allAuthData) {
+            System.out.println("authToken: " + authToken);
             if (registeredAuthData.authToken().equals(authToken)) {
                 //DataAccess <- database
                 return true;
