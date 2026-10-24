@@ -5,6 +5,7 @@ import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import io.javalin.*;
 import model.GameData;
+import model.JoinGameInput;
 import model.UserData;
 import com.google.gson.Gson;
 import services.DeleteService;
@@ -114,6 +115,36 @@ public class Server {
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
+            }
+        });
+
+        //Server -> Handler
+        javalin.put("/game", (ctx)-> {
+            JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
+            String header = ctx.header("authorization");
+            String[] parts = header.split(",");
+            String usernameToTrim = parts[0].trim();
+            String username = usernameToTrim.replaceAll("[\":]", "");
+            String authTokenToTrim = parts[1].trim();
+            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            try {
+                //Handler -> Service
+                GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), username, authToken);
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("gameID", joinGameInput.gameID()));
+                ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(400).result(resultJson);
+            } catch  /*Server <- Handler*/ (UnauthorizedException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(401).result(resultJson);
+            } catch  /*Server <- Handler*/ (AlreadyTakenException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(403).result(resultJson);
             }
         });
     }
