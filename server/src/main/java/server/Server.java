@@ -14,7 +14,6 @@ import services.UserService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class Server {
 
@@ -142,7 +141,6 @@ public class Server {
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             String header = ctx.header("authorization");
-            System.out.println("Join header: " + header);
             String[] parts = header.split(",");
             String usernameToTrim = parts[0].trim();
             String username = usernameToTrim.replaceAll("[\":]", "");

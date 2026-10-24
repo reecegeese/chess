@@ -35,7 +35,6 @@ public class GameService {
     public static List<GameData> listGames(String authToken) throws UnauthorizedException {
         //Service -> DataAccess
         //If authToken is in database
-        System.out.println("listing games");
         if (AuthDataAccess.findAuthToken(authToken)) {
             return GameDataAccess.findAllGames();
         }
@@ -61,10 +60,8 @@ public class GameService {
             }
         }
         //If authToken is in database
-        System.out.println("authorizing join game");
         if (AuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
-            System.out.println("authorized");
             GameData gameData = GameDataAccess.getGameData(gameID);
             GameDataAccess.deleteGameByID(gameID);
             if (Objects.equals(playerColor, "WHITE")) {
