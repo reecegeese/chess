@@ -17,8 +17,9 @@ public class AuthDataAccess {
         allAuthData.add(new AuthData(authToken, username));
     }
 
-    public static void deleteOneAuthData(String authToken) {
-        allAuthData.remove(authToken);
+    public static void deleteAuthToken(String authToken) {
+        //DataAccess <- database
+        allAuthData.removeIf(registeredAuthData -> registeredAuthData.authToken().equals(authToken));
     }
 
     static public boolean findAuthData(AuthData user) {

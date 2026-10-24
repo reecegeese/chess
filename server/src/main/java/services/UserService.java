@@ -47,7 +47,7 @@ public class UserService {
         //Service -> DataAccess
         if (AuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
-            AuthDataAccess.deleteOneAuthData(authToken);
+            AuthDataAccess.deleteAuthToken(authToken);
             return;
         }
         throw new UnauthorizedException("Error: unauthorized");
