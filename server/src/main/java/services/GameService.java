@@ -54,6 +54,9 @@ public class GameService {
             } else if (gameData != null && Objects.equals(playerColor, "BLACK")
                     && gameData.blackUsername() != null) {
                 throw new AlreadyTakenException("Error: unauthorized");
+            } else if (!Objects.equals(playerColor, "WHITE") &&
+                    !Objects.equals(playerColor, "BLACK")){
+                throw new BadRequestException("Error: bad request");
             }
         }
         //If authToken is in database

@@ -1,7 +1,6 @@
 package dataaccess.userdataaccess;
 
 import model.UserData;
-import dataaccess.AlreadyTakenException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,7 @@ public class UserDataAccess {
         //DataAccess -> Database
         for (UserData registeredUser: allUserData) {
             if (registeredUser.username().equals(user.username()) &&
-                    registeredUser.password().equals(user.password()) &&
-                    registeredUser.email().equals(user.email())) {
+                    registeredUser.password().equals(user.password())) {
                 //DataAccess <- database
                 return true;
             }

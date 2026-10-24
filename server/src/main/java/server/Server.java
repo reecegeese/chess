@@ -69,7 +69,7 @@ public class Server {
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
                 // Client <- Server
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 // Client <- Server
