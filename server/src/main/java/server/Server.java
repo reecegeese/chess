@@ -31,8 +31,7 @@ public class Server {
             //Handler -> Service
             DeleteService.deleteService();
             // Client <- Server
-            String resultJson = serializer.toJson(Map.of("username", String.class));
-            ctx.status(200).result(resultJson);
+            ctx.status(200).result("");
         });
 
         //Client -> Server
