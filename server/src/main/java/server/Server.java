@@ -9,6 +9,7 @@ import model.UserData;
 import com.google.gson.Gson;
 import services.DeleteService;
 import services.UserService;
+
 import java.util.Map;
 
 public class Server {
@@ -66,6 +67,24 @@ public class Server {
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(400).result(resultJson);
+            } catch  /*Server <- Handler*/ (UnauthorizedException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(401).result(resultJson);
+            }
+        });
+
+        //Server -> Handler
+        javalin.delete("/session", (ctx)-> {
+            String header = ctx.header("authorization");
+            String[] parts = header.split(",");
+            String authTokenToTrim = parts[1].trim();
+            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            try {
+                //Handler -> Service
+                UserService.logoutUser(authToken);
+                // Client <- Server
+                ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));

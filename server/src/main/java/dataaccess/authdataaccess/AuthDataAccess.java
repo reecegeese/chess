@@ -17,11 +17,27 @@ public class AuthDataAccess {
         allAuthData.add(new AuthData(authToken, username));
     }
 
+    public static void deleteOneAuthData(String authToken) {
+        allAuthData.remove(authToken);
+    }
+
     static public boolean findAuthData(AuthData user) {
         //DataAccess -> Database
-        System.out.println("looping");
         for (AuthData registeredAuthData: allAuthData) {
-            if (registeredAuthData.username().equals(user.username())) {
+            if (registeredAuthData.authToken().equals(user.authToken()) &&
+                    registeredAuthData.username().equals(user.username())) {
+                //DataAccess <- database
+                return true;
+            }
+        }
+        //DataAccess <- database
+        return false;
+    }
+
+    static public boolean findAuthToken(String authToken) {
+        //DataAccess -> Database
+        for (AuthData registeredAuthData: allAuthData) {
+            if (registeredAuthData.authToken().equals(authToken)) {
                 //DataAccess <- database
                 return true;
             }

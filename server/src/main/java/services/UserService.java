@@ -38,8 +38,17 @@ public class UserService {
             //Service -> DataAccess
             String authToken = AuthDataAccess.createAuthToken();
             AuthDataAccess.addAuthData(authToken, user.username());
-            System.out.println("Found auth data");
             return "\"" + authToken + "\"\":\"\", \"" + user.username() + "\":\"\"";
+        }
+        throw new UnauthorizedException("Error: unauthorized");
+    }
+
+    public static void logoutUser(String authToken) throws UnauthorizedException{
+        //Service -> DataAccess
+        if (AuthDataAccess.findAuthToken(authToken)) {
+            //Service -> DataAccess
+            AuthDataAccess.deleteOneAuthData(authToken);
+            return;
         }
         throw new UnauthorizedException("Error: unauthorized");
     }
