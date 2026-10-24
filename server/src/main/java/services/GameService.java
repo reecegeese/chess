@@ -7,8 +7,10 @@ import dataaccess.authdataaccess.AuthDataAccess;
 import dataaccess.gamedataaccess.GameDataAccess;
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
+import java.util.List;
 
 public class GameService {
 
@@ -26,6 +28,15 @@ public class GameService {
             GameData currentGame = new GameData(gameID, null, null, gameName, null);
             GameDataAccess.addGameData(gameID, null, null, gameName, null);
             return currentGame;
+        }
+        throw new UnauthorizedException("Error: unauthorized");
+    }
+
+    public static List<GameData> listGames(String authToken) throws UnauthorizedException {
+        //Service -> DataAccess
+        //If authToken is in database
+        if (AuthDataAccess.findAuthToken(authToken)) {
+            return GameDataAccess.findAllGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
     }

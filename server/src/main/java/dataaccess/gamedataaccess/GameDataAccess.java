@@ -34,6 +34,10 @@ public class GameDataAccess {
         return false;
     }
 
+    public static List<GameData> findAllGames() {
+        return allGameData;
+    }
+
     public static GameData getGameData(int gameID) {
         for (GameData registeredGameData: allGameData) {
             if (registeredGameData.gameID() == gameID) {
