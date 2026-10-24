@@ -106,6 +106,10 @@ public class Server {
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
                 ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));

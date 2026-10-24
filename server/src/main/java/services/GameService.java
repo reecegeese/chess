@@ -13,7 +13,7 @@ public class GameService {
     public static GameData createGame(String gameName, String authToken) throws UnauthorizedException, BadRequestException {
         //Service -> DataAccess
         //Check for bad request
-        if (GameDataAccess.findGame(gameName)) {
+        if (GameDataAccess.findGame(gameName) || gameName == null) {
             throw new BadRequestException("Error: bad request");
         }
         //If authToken is in database
