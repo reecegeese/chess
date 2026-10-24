@@ -51,7 +51,7 @@ public class ChessGame {
 
     /**
      * Sets which teams turn it is
-     //*
+     * //*
      * //@param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor color) {
@@ -127,7 +127,7 @@ public class ChessGame {
                 //Is there is a promotion
                 if (move.getPromotionPiece() != null) {
                     ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
-                    board.addPiece(endPosition, new ChessPiece (teamColor, promotionPiece));
+                    board.addPiece(endPosition, new ChessPiece(teamColor, promotionPiece));
                     board.removePiece(startPosition);
                     //If there is not a promotion
                 } else {
@@ -169,8 +169,8 @@ public class ChessGame {
 
     //Find the king of the specified color
     public ChessPosition findKing(TeamColor teamColor) {
-        for (int row=1; row<9; row++) {
-            for (int column=1; column<9; column++) {
+        for (int row = 1; row < 9; row++) {
+            for (int column = 1; column < 9; column++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, column));
                 if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING
                         && piece.getTeamColor() == teamColor) {
@@ -183,8 +183,8 @@ public class ChessGame {
 
     //Find the king of the specified color in boardCopy
     public ChessPosition findKingCopy(TeamColor teamColor, ChessBoard boardCopy) {
-        for (int row=1; row<9; row++) {
-            for (int column=1; column<9; column++) {
+        for (int row = 1; row < 9; row++) {
+            for (int column = 1; column < 9; column++) {
                 ChessPiece piece = boardCopy.getPiece(new ChessPosition(row, column));
                 if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING
                         && piece.getTeamColor() == teamColor) {
@@ -193,6 +193,30 @@ public class ChessGame {
             }
         }
         throw new Error("King not found");
+    }
+
+    public boolean pawnCanTakeMe(ChessPosition myPosition, ChessPosition enemyPosition,
+                                 TeamColor teamColor, int row, int column) {
+        //If piece enemy is a pawn
+        int enemyRow = enemyPosition.getRow();
+        int enemyColumn = enemyPosition.getColumn();
+        //Enemy is a black pawn
+        if (teamColor == WHITE) {
+            //Pawn can take myPosition by going down left
+            if (row > 2 && column > 1 && Objects.equals(new ChessPosition(enemyRow - 1, enemyColumn - 1), myPosition)) {
+                return true;
+            }
+            //Pawn can take myPosition by going down right
+            return row > 2 && column < 8 && Objects.equals(new ChessPosition(enemyRow - 1, enemyColumn + 1), myPosition);
+            //Enemy is a white pawn
+        } else {
+            //Pawn can take myPosition by going up left
+            if (row < 8 && column > 1 && Objects.equals(new ChessPosition(enemyRow + 1, enemyColumn - 1), myPosition)) {
+                return true;
+            }
+            //Pawn can take myPosition by going up right
+            return row < 8 && column < 8 && Objects.equals(new ChessPosition(enemyRow + 1, enemyColumn + 1), myPosition);
+        }
     }
 
     //Boolean for if the given piece can be taken
@@ -206,6 +230,10 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(board, enemyPosition);
+                    if (piece.getPieceType() == PAWN && pawnCanTakeMe(myPosition, enemyPosition,
+                            teamColor, row, column)) {
+                        return true;
+                    }
                     //If piece enemy is a pawn
                     if (piece.getPieceType() == PAWN) {
                         int enemyRow = enemyPosition.getRow();
