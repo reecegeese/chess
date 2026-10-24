@@ -4,10 +4,8 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import dataaccess.authdataaccess.AuthDataAccess;
-import dataaccess.gamedataaccess.GameDataAccess;
 import dataaccess.userdataaccess.UserDataAccess;
 import model.UserData;
-import model.AuthData;
 
 public class UserService {
 
@@ -52,8 +50,4 @@ public class UserService {
         }
         throw new UnauthorizedException("Error: unauthorized");
     }
-
-    //public RegisterResult register(RegisterRequest registerRequest) {}
-    //public LoginResult login(LoginRequest loginRequest) {}
-    //public void logout(LogoutRequest logoutRequest) {}
 }

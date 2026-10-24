@@ -4,10 +4,11 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import io.javalin.*;
-import model.AuthData;
+import model.GameData;
 import model.UserData;
 import com.google.gson.Gson;
 import services.DeleteService;
+import services.GameService;
 import services.UserService;
 
 import java.util.Map;
@@ -92,20 +93,25 @@ public class Server {
             }
         });
 
-        //AuthDataAccess AuthDA = new AuthDataAccess();
-        //GameDataAccess GameDA = new GameDataAccess();
-        //UserDataAccess UserDA = new UserDataAccess();
-
-        //ctx.attribute("auth",authData)
-        //ctx.header("authorization")
-        //ctx.body()
-        // ctx.header("authorization"),
-        //Get authToken, not AuthData
-
-        //services talk with DAO
-        //ctx.status(200)
-        //ctx.result(data)
-
+        //Server -> Handler
+        javalin.post("/game", (ctx)-> {
+            GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
+            String header = ctx.header("authorization");
+            String[] parts = header.split(",");
+            String authTokenToTrim = parts[1].trim();
+            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            try {
+                //Handler -> Service
+                GameData gameData = GameService.createGame(gameName.gameName(), authToken);
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
+                ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (UnauthorizedException e){
+                // Client <- Server
+                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                ctx.status(401).result(resultJson);
+            }
+        });
     }
 
     public int run(int desiredPort) {
