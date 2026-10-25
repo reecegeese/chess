@@ -230,35 +230,10 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(board, enemyPosition);
+                    //If piece enemy is a pawn
                     if (piece.getPieceType() == PAWN && pawnCanTakeMe(myPosition, enemyPosition,
                             teamColor, row, column)) {
                         return true;
-                    }
-                    //If piece enemy is a pawn
-                    if (piece.getPieceType() == PAWN) {
-                        int enemyRow = enemyPosition.getRow();
-                        int enemyColumn = enemyPosition.getColumn();
-                        //Enemy is a black pawn
-                        if (teamColor == WHITE) {
-                            //Pawn can take myPosition by going down left
-                            if (row > 2 && column > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
-                                return true;
-                            }
-                            //Pawn can take myPosition by going down right
-                            if (row > 2 && column < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
-                                return true;
-                            }
-                            //Enemy is a white pawn
-                        } else {
-                            //Pawn can take myPosition by going up left
-                            if (row < 8 && column > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
-                                return true;
-                            }
-                            //Pawn can take myPosition by going up right
-                            if (row < 8 && column < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
-                                return true;
-                            }
-                        }
                     }
                     //Check all enemy moves
                     for (ChessMove move : possibleMoves) {
@@ -286,30 +261,10 @@ public class ChessGame {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(boardCopy, enemyPosition);
                     //If piece enemy is a pawn
-                    if (piece.getPieceType() == PAWN) {
-                        int enemyRow = enemyPosition.getRow();
-                        int enemyColumn = enemyPosition.getColumn();
-                        //Enemy is a black pawn
-                        if (teamColor == WHITE) {
-                            //Pawn can take myPosition by going down left
-                            if (row > 2 && column > 1 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn-1), myPosition)) {
-                                return true;
-                            }
-                            //Pawn can take myPosition by going down right
-                            if (row > 2 && column < 8 && Objects.equals(new ChessPosition(enemyRow-1, enemyColumn+1), myPosition)) {
-                                return true;
-                            }
-                            //Enemy is a white pawn
-                        } else {
-                            //Pawn can take myPosition by going up left
-                            if (row < 8 && column > 1 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn-1), myPosition)) {
-                                return true;
-                            }
-                            //Pawn can take myPosition by going up right
-                            if (row < 8 && column < 8 && Objects.equals(new ChessPosition(enemyRow+1, enemyColumn+1), myPosition)) {
-                                return true;
-                            }
-                        }
+                    //If piece enemy is a pawn
+                    if (piece.getPieceType() == PAWN && pawnCanTakeMe(myPosition, enemyPosition,
+                            teamColor, row, column)) {
+                        return true;
                     }
                     //Check all enemy moves
                     for (ChessMove move : possibleMoves) {

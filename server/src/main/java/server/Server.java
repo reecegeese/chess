@@ -78,13 +78,10 @@ public class Server {
 
         //Server -> Handler
         javalin.delete("/session", (ctx)-> {
-            String header = ctx.header("authorization");
-            String[] parts = header.split(",");
-            String authTokenToTrim = parts[1].trim();
-            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
                 //Handler -> Service
-                UserService.logoutUser(authToken);
+                UserService.logoutUser(headerParts[1]);
                 // Client <- Server
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
@@ -97,13 +94,10 @@ public class Server {
         //Server -> Handler
         javalin.post("/game", (ctx)-> {
             GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
-            String header = ctx.header("authorization");
-            String[] parts = header.split(",");
-            String authTokenToTrim = parts[1].trim();
-            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
                 //Handler -> Service
-                GameData gameData = GameService.createGame(gameName.gameName(), authToken);
+                GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
                 ctx.status(200).result(resultJson);
@@ -120,13 +114,10 @@ public class Server {
 
         //Server -> Handler
         javalin.get("/game", (ctx)-> {
-            String header = ctx.header("authorization");
-            String[] parts = header.split(",");
-            String authTokenToTrim = parts[1].trim();
-            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
                 //Handler -> Service
-                List<GameData> games = GameService.listGames(authToken);
+                List<GameData> games = GameService.listGames(headerParts[1]);
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("games", games));
                 ctx.status(200).result(resultJson);
@@ -140,15 +131,10 @@ public class Server {
         //Server -> Handler
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
-            String header = ctx.header("authorization");
-            String[] parts = header.split(",");
-            String usernameToTrim = parts[0].trim();
-            String username = usernameToTrim.replaceAll("[\":]", "");
-            String authTokenToTrim = parts[1].trim();
-            String authToken = authTokenToTrim.replaceAll("[\":]", "");
+            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
                 //Handler -> Service
-                GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), username, authToken);
+                GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), headerParts[0], headerParts[1]);
                 // Client <- Server
                 String resultJson = serializer.toJson(Map.of("gameID", joinGameInput.gameID()));
                 ctx.status(200).result(resultJson);
@@ -175,5 +161,14 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    public static String[] getHeaderParts(String header) {
+        String[] parts = header.split(",");
+        String usernameToTrim = parts[0].trim();
+        String username = usernameToTrim.replaceAll("[\":]", "");
+        String authTokenToTrim = parts[1].trim();
+        String authToken = authTokenToTrim.replaceAll("[\":]", "");
+        return new String[] {username, authToken};
     }
 }
