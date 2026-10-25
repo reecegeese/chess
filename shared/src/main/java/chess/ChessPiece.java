@@ -303,12 +303,7 @@ public class ChessPiece {
                     movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+2,pieceColumn), null));
                 }
             } else if /*Promotion*/ (pieceRow == 7) {
-                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn)) == null) {
-                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.QUEEN));
-                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.BISHOP));
-                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.KNIGHT));
-                    movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.ROOK));
-                }
+                whitePromote(board, movesList, myPosition, pieceRow, pieceColumn);
                 if /*Left may be out of bounds*/ (pieceColumn != 1) {
                     if /*Capture left promote*/ (board.getPiece(new ChessPosition(pieceRow+1, pieceColumn-1)) != null) {
                         ChessPiece capturePiece = board.getPiece(new ChessPosition(pieceRow+1, pieceColumn-1));
@@ -351,12 +346,7 @@ public class ChessPiece {
                     movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow-2,pieceColumn), null));
                 }
             } else if /*Promotion*/ (pieceRow == 2) {
-                if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn)) == null) {
-                    movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.QUEEN));
-                    movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.BISHOP));
-                    movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.KNIGHT));
-                    movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.ROOK));
-                }
+                blackPromote(board, movesList, myPosition, pieceRow, pieceColumn);
                 if /*Left may be out of bounds*/ (pieceColumn != 1) {
                     if /*Capture left promote*/ (board.getPiece(new ChessPosition(pieceRow-1, pieceColumn-1)) != null) {
                         ChessPiece capturePiece = board.getPiece(new ChessPosition(pieceRow-1, pieceColumn-1));
@@ -390,6 +380,17 @@ public class ChessPiece {
         return movesList;
     }
 
+    public static void blackPromote(ChessBoard board, List<ChessMove> movesList,
+                                               ChessPosition myPosition,
+                                               int pieceRow, int pieceColumn) {
+        if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow-1,pieceColumn)) == null) {
+            movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.QUEEN));
+            movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.BISHOP));
+            movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.KNIGHT));
+            movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow-1, pieceColumn), PieceType.ROOK));
+        }
+    }
+
     public static void blackCapturePromoteLeft(List<ChessMove> movesList,
                                                ChessPosition myPosition,
                                                ChessPiece capturePiece,
@@ -411,6 +412,17 @@ public class ChessPiece {
             movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow+1, pieceColumn+1), PieceType.BISHOP));
             movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow+1, pieceColumn+1), PieceType.KNIGHT));
             movesList.add(new ChessMove(myPosition, new ChessPosition(pieceRow+1, pieceColumn+1), PieceType.ROOK));
+        }
+    }
+
+    public static void whitePromote(ChessBoard board, List<ChessMove> movesList,
+                                               ChessPosition myPosition,
+                                               int pieceRow, int pieceColumn) {
+        if /*Not blocked*/ (board.getPiece(new ChessPosition(pieceRow+1,pieceColumn)) == null) {
+            movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.QUEEN));
+            movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.BISHOP));
+            movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.KNIGHT));
+            movesList.add(new ChessMove(myPosition,new ChessPosition(pieceRow+1,pieceColumn), PieceType.ROOK));
         }
     }
 

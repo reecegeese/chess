@@ -341,13 +341,8 @@ public class ChessGame {
                     ChessPosition position = new ChessPosition(row, column);
                     ChessPiece piece = board.getPiece(position);
                     //If piece exists and is an ally
-                    if (piece != null && piece.getTeamColor() == teamColor) {
-                        //Get all of ally's moves
-                        Collection<ChessMove> legalMoves = validMoves(position);
-                        //If there is any legal move, not in stalemate
-                        if (!legalMoves.isEmpty()) {
-                            return false;
-                        }
+                    if (!allyExists(position, piece, teamColor)) {
+                        return false;
                     }
                 }
             }

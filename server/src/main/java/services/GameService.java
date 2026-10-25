@@ -41,7 +41,8 @@ public class GameService {
         throw new UnauthorizedException("Error: unauthorized");
     }
 
-    public static void joinGame(int gameID, String playerColor, String username, String authToken) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public static void joinGame(int gameID, String playerColor, String username, String authToken)
+            throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         //Service -> DataAccess
         //Check for bad request
         if (!GameDataAccess.findGameByID(gameID)) {
