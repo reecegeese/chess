@@ -236,12 +236,8 @@ public class ChessGame {
                         return true;
                     }
                     //Check all enemy moves
-                    for (ChessMove move : possibleMoves) {
-                        ChessPosition endPosition = move.getEndPosition();
-                        //If opponent can take my piece
-                        if (Objects.equals(endPosition, myPosition)) {
-                            return true;
-                        }
+                    if (checkAllMoves(myPosition, possibleMoves)) {
+                        return true;
                     }
                 }
             }
@@ -261,20 +257,26 @@ public class ChessGame {
                     //Get all of opponent's moves
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(boardCopy, enemyPosition);
                     //If piece enemy is a pawn
-                    //If piece enemy is a pawn
                     if (piece.getPieceType() == PAWN && pawnCanTakeMe(myPosition, enemyPosition,
                             teamColor, row, column)) {
                         return true;
                     }
                     //Check all enemy moves
-                    for (ChessMove move : possibleMoves) {
-                        ChessPosition endPosition = move.getEndPosition();
-                        //If opponent can take my piece
-                        if (Objects.equals(endPosition, myPosition)) {
-                            return true;
-                        }
+                    if (checkAllMoves(myPosition, possibleMoves)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    public Boolean checkAllMoves(ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        for (ChessMove move : possibleMoves) {
+            ChessPosition endPosition = move.getEndPosition();
+            //If opponent can take my piece
+            if (Objects.equals(endPosition, myPosition)) {
+                return true;
             }
         }
         return false;
@@ -297,13 +299,8 @@ public class ChessGame {
                     ChessPosition position = new ChessPosition(row, column);
                     ChessPiece piece = board.getPiece(position);
                     //If piece exists and is an ally
-                    if (piece != null && piece.getTeamColor() == teamColor) {
-                        //Get all of ally's moves
-                        Collection<ChessMove> legalMoves = validMoves(position);
-                        //If there is any legal move, not in checkmate
-                        if (!legalMoves.isEmpty()) {
-                            return false;
-                        }
+                    if (!allyExists(position, piece, teamColor)) {
+                        return false;
                     }
                 }
             }
@@ -312,6 +309,18 @@ public class ChessGame {
         }
         //If not in check, return false
         return false;
+    }
+
+    public boolean allyExists(ChessPosition position, ChessPiece piece, TeamColor teamColor) {
+        if (piece != null && piece.getTeamColor() == teamColor) {
+            //Get all of ally's moves
+            Collection<ChessMove> legalMoves = validMoves(position);
+            //If there is any legal move, not in checkmate
+            if (!legalMoves.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
