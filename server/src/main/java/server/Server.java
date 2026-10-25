@@ -24,130 +24,90 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-
-        //Client -> Server
         javalin.delete("/db", (ctx)-> {
-            //Handler -> Service
             DeleteService.deleteService();
-            // Client <- Server
             ctx.status(200).result("");
         });
-
-        //Client -> Server
         javalin.post("/user", (ctx)-> {
-            //Server -> Handler
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             try {
-                //Handler -> Service
                 String authToken = UserService.registerUser(user);
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("username", user.username()
                         , "authToken", authToken));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(403).result(resultJson);
             }
         });
-
-        //Server -> Handler
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             try {
-                //Handler -> Service
                 String authToken = UserService.loginUser(user);
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("username", user.username()
                         , "authToken", authToken));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
             }
         });
-
-        //Server -> Handler
         javalin.delete("/session", (ctx)-> {
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
-                //Handler -> Service
                 UserService.logoutUser(headerParts[1]);
-                // Client <- Server
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
             }
         });
-
-        //Server -> Handler
         javalin.post("/game", (ctx)-> {
             GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
-                //Handler -> Service
                 GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
             }
         });
-
-        //Server -> Handler
-        javalin.get("/game", (ctx)-> {
+            javalin.get("/game", (ctx)-> {
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
-                //Handler -> Service
                 List<GameData> games = GameService.listGames(headerParts[1]);
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("games", games));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
             }
         });
-
-        //Server -> Handler
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
-                //Handler -> Service
                 GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), headerParts[0], headerParts[1]);
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("gameID", joinGameInput.gameID()));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
-                // Client <- Server
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(403).result(resultJson);
             }

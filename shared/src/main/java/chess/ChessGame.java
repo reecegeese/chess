@@ -294,21 +294,25 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
             //Check every square on the board
-            for (int row=1; row<9; row++) {
-                for (int column=1; column<9; column++) {
-                    ChessPosition position = new ChessPosition(row, column);
-                    ChessPiece piece = board.getPiece(position);
-                    //If piece exists and is an ally
-                    if (!allyExists(position, piece, teamColor)) {
-                        return false;
-                    }
-                }
-            }
+            return checkForAlly(teamColor);
             //No legal moves for any piece means checkmate
-            return true;
         }
         //If not in check, return false
         return false;
+    }
+
+    public boolean checkForAlly(TeamColor teamColor) {
+        for (int row=1; row<9; row++) {
+            for (int column=1; column<9; column++) {
+                ChessPosition position = new ChessPosition(row, column);
+                ChessPiece piece = board.getPiece(position);
+                //If piece exists and is an ally
+                if (allyExists(position, piece, teamColor)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public boolean allyExists(ChessPosition position, ChessPiece piece, TeamColor teamColor) {
@@ -316,11 +320,9 @@ public class ChessGame {
             //Get all of ally's moves
             Collection<ChessMove> legalMoves = validMoves(position);
             //If there is any legal move, not in checkmate
-            if (!legalMoves.isEmpty()) {
-                return false;
-            }
+            return !legalMoves.isEmpty();
         }
-        return true;
+        return false;
     }
 
     /**
@@ -336,18 +338,8 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         if (!isInCheck(teamColor)) {
             //Check every square on the board
-            for (int row=1; row<9; row++) {
-                for (int column=1; column<9; column++) {
-                    ChessPosition position = new ChessPosition(row, column);
-                    ChessPiece piece = board.getPiece(position);
-                    //If piece exists and is an ally
-                    if (!allyExists(position, piece, teamColor)) {
-                        return false;
-                    }
-                }
-            }
+            return checkForAlly(teamColor);
             //No legal moves for any piece while not in check means stalemate
-            return true;
         }
         //If in check, return false
         return false;
