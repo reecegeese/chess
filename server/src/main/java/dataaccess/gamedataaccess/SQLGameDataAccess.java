@@ -6,6 +6,7 @@ import model.GameData;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static dataaccess.DatabaseManager.*;
@@ -64,7 +65,28 @@ public class SQLGameDataAccess {
     }
 
     public static List<GameData> findAllGames() {
-        return allGameData;
+        List<GameData> games = new ArrayList<>();
+        //DataAccess -> Database
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
+            conn.setCatalog(databaseName);
+            String getData = "SELECT gameID, whiteUsername, blackUsername, gameName, game" +
+                    "FROM gameData WHERE gameID = ?)";
+            try (var getStatement = conn.prepareStatement(getData);
+                  var returnStatement = getStatement.executeQuery()) {
+                while (returnStatement.next()) {
+                    ChessGame chessGame = new Gson().fromJson(returnStatement.getString("game"), ChessGame.class);
+                    games.add(new GameData(
+                            returnStatement.getInt("gameID"),
+                            returnStatement.getString("whiteUsername"),
+                            returnStatement.getString("blackUsername"),
+                            returnStatement.getString("gameName"),
+                            chessGame));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return games;
     }
 
     public static GameData getGameData(int gameID) {

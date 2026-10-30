@@ -4,7 +4,7 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import dataaccess.authdataaccess.SQLAuthDataAccess;
-import dataaccess.gamedataaccess.MemoryGameDataAccess;
+import dataaccess.gamedataaccess.SQLGameDataAccess;
 import model.GameData;
 
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class GameService {
     public static GameData createGame(String gameName, String authToken) throws UnauthorizedException, BadRequestException {
         //Service -> DataAccess
         //Check for bad request
-        if (MemoryGameDataAccess.findGameByName(gameName) || gameName == null) {
+        if (SQLGameDataAccess.findGameByName(gameName) || gameName == null) {
             throw new BadRequestException("Error: bad request");
         }
         //If authToken is in database
@@ -25,7 +25,7 @@ public class GameService {
             Random rand = new Random();
             int gameID = rand.nextInt(9000) + 1000;
             GameData currentGame = new GameData(gameID, null, null, gameName, null);
-            MemoryGameDataAccess.addGameData(gameID, null, null, gameName, null);
+            SQLGameDataAccess.addGameData(gameID, null, null, gameName, null);
             return currentGame;
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -35,7 +35,7 @@ public class GameService {
         //Service -> DataAccess
         //If authToken is in database
         if (SQLAuthDataAccess.findAuthToken(authToken)) {
-            return MemoryGameDataAccess.findAllGames();
+            return SQLGameDataAccess.findAllGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
     }
@@ -44,10 +44,10 @@ public class GameService {
             throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         //Service -> DataAccess
         //Check for bad request
-        if (!MemoryGameDataAccess.findGameByID(gameID)) {
+        if (!SQLGameDataAccess.findGameByID(gameID)) {
             throw new BadRequestException("Error: bad request");
         } else {
-            GameData gameData = MemoryGameDataAccess.getGameData(gameID);
+            GameData gameData = SQLGameDataAccess.getGameData(gameID);
             if (gameData != null && Objects.equals(playerColor, "WHITE")
                 && gameData.whiteUsername() != null) {
                 throw new AlreadyTakenException("Error: already taken");
@@ -62,13 +62,13 @@ public class GameService {
         //If authToken is in database
         if (SQLAuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
-            GameData gameData = MemoryGameDataAccess.getGameData(gameID);
-            MemoryGameDataAccess.deleteGameByID(gameID);
+            GameData gameData = SQLGameDataAccess.getGameData(gameID);
+            SQLGameDataAccess.deleteGameByID(gameID);
             if (Objects.equals(playerColor, "WHITE")) {
-                MemoryGameDataAccess.addGameData(gameID, username,
+                SQLGameDataAccess.addGameData(gameID, username,
                         gameData.blackUsername(), gameData.gameName(), gameData.game());
             } else {
-                MemoryGameDataAccess.addGameData(gameID, gameData.whiteUsername(),
+                SQLGameDataAccess.addGameData(gameID, gameData.whiteUsername(),
                         username, gameData.gameName(), gameData.game());
             }
             return;
