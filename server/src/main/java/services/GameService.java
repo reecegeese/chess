@@ -3,11 +3,10 @@ package services;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
-import dataaccess.authdataaccess.AuthDataAccess;
+import dataaccess.authdataaccess.SQLAuthDataAccess;
 import dataaccess.gamedataaccess.GameDataAccess;
 import model.GameData;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.List;
@@ -21,7 +20,7 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
         //If authToken is in database
-        if (AuthDataAccess.findAuthToken(authToken)) {
+        if (SQLAuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
             Random rand = new Random();
             int gameID = rand.nextInt(9000) + 1000;
@@ -35,7 +34,7 @@ public class GameService {
     public static List<GameData> listGames(String authToken) throws UnauthorizedException {
         //Service -> DataAccess
         //If authToken is in database
-        if (AuthDataAccess.findAuthToken(authToken)) {
+        if (SQLAuthDataAccess.findAuthToken(authToken)) {
             return GameDataAccess.findAllGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -61,7 +60,7 @@ public class GameService {
             }
         }
         //If authToken is in database
-        if (AuthDataAccess.findAuthToken(authToken)) {
+        if (SQLAuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
             GameData gameData = GameDataAccess.getGameData(gameID);
             GameDataAccess.deleteGameByID(gameID);

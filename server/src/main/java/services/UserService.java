@@ -3,8 +3,8 @@ package services;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
-import dataaccess.authdataaccess.AuthDataAccess;
-import dataaccess.userdataaccess.MemoryUserDataAccess;
+import dataaccess.authdataaccess.SQLAuthDataAccess;
+import dataaccess.userdataaccess.SQLUserDataAccess;
 import model.UserData;
 
 public class UserService {
@@ -16,11 +16,11 @@ public class UserService {
             throw new BadRequestException("Error: bad request");
         }
         //If user is not in database
-        if (!MemoryUserDataAccess.findUserData(user)) {
+        if (!SQLUserDataAccess.findUserData(user)) {
             //Service -> DataAccess
-            MemoryUserDataAccess.addUserData(user);
-            String authToken = AuthDataAccess.createAuthToken();
-            AuthDataAccess.addAuthData(authToken, user.username());
+            SQLUserDataAccess.addUserData(user);
+            String authToken = SQLAuthDataAccess.createAuthToken();
+            SQLAuthDataAccess.addAuthData(authToken, user.username());
             return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
         }
         throw new AlreadyTakenException("Error: already taken");
@@ -32,10 +32,10 @@ public class UserService {
         if (user.username() == null || user.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        if (MemoryUserDataAccess.findUserData(user)) {
+        if (SQLUserDataAccess.findUserData(user)) {
             //Service -> DataAccess
-            String authToken = AuthDataAccess.createAuthToken();
-            AuthDataAccess.addAuthData(authToken, user.username());
+            String authToken = SQLAuthDataAccess.createAuthToken();
+            SQLAuthDataAccess.addAuthData(authToken, user.username());
             return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -43,9 +43,9 @@ public class UserService {
 
     public static void logoutUser(String authToken) throws UnauthorizedException{
         //Service -> DataAccess
-        if (AuthDataAccess.findAuthToken(authToken)) {
+        if (SQLAuthDataAccess.findAuthToken(authToken)) {
             //Service -> DataAccess
-            AuthDataAccess.deleteAuthToken(authToken);
+            SQLAuthDataAccess.deleteAuthToken(authToken);
             return;
         }
         throw new UnauthorizedException("Error: unauthorized");

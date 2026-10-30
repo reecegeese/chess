@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuthDataAccess {
+public class MemoryAuthDataAccess {
     static List<AuthData> allAuthData = new ArrayList<>();
 
     public static String createAuthToken() {
