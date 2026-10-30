@@ -6,7 +6,7 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameDataAccess {
+public class MemoryGameDataAccess {
     static List<GameData> allGameData = new ArrayList<>();
 
     public static void addGameData(int gameID, String whiteUsername, String blackUsername,

@@ -1,11 +1,8 @@
 package dataaccess.authdataaccess;
 
-import model.AuthData;
-
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.ArrayList;
 
 import static dataaccess.DatabaseManager.*;
 import static dataaccess.DatabaseManager.databaseName;
