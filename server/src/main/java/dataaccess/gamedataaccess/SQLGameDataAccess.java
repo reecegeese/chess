@@ -36,7 +36,7 @@ public class SQLGameDataAccess {
         //DataAccess -> Database
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            String findGame = "SELECT EXISTS (SELECT 1 FROM gameData WHERE gameName = ?)";
+            String findGame = "SELECT 1 FROM gameData WHERE gameName = ?";
             try (var findStatement = conn.prepareStatement(findGame)) {
                 findStatement.setString(1, gameName);
                 try (var returnStatement = findStatement.executeQuery()) {
@@ -52,7 +52,7 @@ public class SQLGameDataAccess {
         //DataAccess -> Database
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            String findGame = "SELECT EXISTS (SELECT 1 FROM gameData WHERE gameID = ?)";
+            String findGame = "SELECT 1 FROM gameData WHERE gameID = ?";
             try (var findStatement = conn.prepareStatement(findGame)) {
                 findStatement.setInt(1, gameID);
                 try (var returnStatement = findStatement.executeQuery()) {
