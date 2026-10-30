@@ -5,7 +5,7 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDataAccess {
+public class MemoryUserDataAccess {
     //Database
     static List<UserData> allUserData = new ArrayList<>();
 

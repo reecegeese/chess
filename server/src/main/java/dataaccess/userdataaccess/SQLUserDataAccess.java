@@ -1,0 +1,28 @@
+package dataaccess.userdataaccess;
+
+import model.UserData;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SQLUserDataAccess {
+    //Database
+    static List<UserData> allUserData = new ArrayList<>();
+
+    static public void addUserData(UserData user) {
+        //DataAccess -> Database
+        allUserData.add(user);
+    }
+
+    static public boolean findUserData(UserData user) {
+        //DataAccess -> Database
+        for (UserData registeredUser: allUserData) {
+            if (registeredUser.username().equals(user.username()) &&
+                    registeredUser.password().equals(user.password())) {
+                //DataAccess <- database
+                return true;
+            }
+        }
+        //DataAccess <- database
+        return false;
+    }
+}

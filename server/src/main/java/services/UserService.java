@@ -4,7 +4,8 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import dataaccess.authdataaccess.AuthDataAccess;
-import dataaccess.userdataaccess.UserDataAccess;
+import dataaccess.userdataaccess.MemoryUserDataAccess;
+import dataaccess.userdataaccess.SQLUserDataAccess;
 import model.UserData;
 
 public class UserService {
@@ -16,9 +17,9 @@ public class UserService {
             throw new BadRequestException("Error: bad request");
         }
         //If user is not in database
-        if (!UserDataAccess.findUserData(user)) {
+        if (!MemoryUserDataAccess.findUserData(user)) {
             //Service -> DataAccess
-            UserDataAccess.addUserData(user);
+            MemoryUserDataAccess.addUserData(user);
             String authToken = AuthDataAccess.createAuthToken();
             AuthDataAccess.addAuthData(authToken, user.username());
             return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
@@ -32,7 +33,7 @@ public class UserService {
         if (user.username() == null || user.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        if (UserDataAccess.findUserData(user)) {
+        if (MemoryUserDataAccess.findUserData(user)) {
             //Service -> DataAccess
             String authToken = AuthDataAccess.createAuthToken();
             AuthDataAccess.addAuthData(authToken, user.username());

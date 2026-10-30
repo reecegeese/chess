@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
 import io.javalin.*;
 import model.GameData;
 import model.JoinGameInput;
@@ -23,6 +21,11 @@ public class Server {
 
 
     public Server() {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException();
+        }
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         javalin.delete("/db", (ctx)-> {
             DeleteService.deleteService();
