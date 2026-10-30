@@ -4,8 +4,6 @@ import model.UserData;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static dataaccess.DatabaseManager.*;
 import static dataaccess.DatabaseManager.databaseName;
@@ -29,15 +27,21 @@ public class SQLUserDataAccess {
 
     static public boolean findUserData(UserData user) {
         //DataAccess -> Database
-        for (UserData registeredUser: allUserData) {
-            if (registeredUser.username().equals(user.username()) &&
-                    registeredUser.password().equals(user.password())) {
-                //DataAccess <- database
-                return true;
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
+            conn.setCatalog(databaseName);
+            String findUser = "SELECT EXISTS (SELECT 1 FROM user WHERE username = ?" +
+                    "AND password = ? AND email = ?);";
+            try (var findStatement = conn.prepareStatement(findUser)) {
+                findStatement.setString(1, user.username());
+                findStatement.setString(2, user.password());
+                findStatement.setString(3, user.email());
+                try (var returnStatement = findStatement.executeQuery()) {
+                    return returnStatement.next();
+                }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        //DataAccess <- database
-        return false;
     }
 
     static public void deleteUserData() {
