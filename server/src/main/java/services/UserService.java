@@ -5,7 +5,6 @@ import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
 import dataaccess.authdataaccess.AuthDataAccess;
 import dataaccess.userdataaccess.MemoryUserDataAccess;
-import dataaccess.userdataaccess.SQLUserDataAccess;
 import model.UserData;
 
 public class UserService {
