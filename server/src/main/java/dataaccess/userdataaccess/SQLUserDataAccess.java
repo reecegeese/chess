@@ -29,12 +29,11 @@ public class SQLUserDataAccess {
         //DataAccess -> Database
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            String findUser = "SELECT EXISTS (SELECT 1 FROM user WHERE username = ?" +
-                    "AND password = ? AND email = ?);";
+            String findUser = "SELECT 1 FROM userData WHERE username = ?" +
+                    "AND password = ?;";
             try (var findStatement = conn.prepareStatement(findUser)) {
                 findStatement.setString(1, user.username());
                 findStatement.setString(2, user.password());
-                findStatement.setString(3, user.email());
                 try (var returnStatement = findStatement.executeQuery()) {
                     return returnStatement.next();
                 }
