@@ -39,11 +39,14 @@ public class Server {
                         , "authToken", authToken));
                 ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(403).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
             }
         });
         javalin.post("/session", (ctx)-> {
@@ -57,50 +60,68 @@ public class Server {
                 String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
             }
         });
         javalin.delete("/session", (ctx)-> {
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
+                String[] headerParts = getHeaderParts(ctx.header("authorization"));
                 UserService.logoutUser(headerParts[1]);
                 ctx.status(200).result("");
-            } catch  /*Server <- Handler*/ (UnauthorizedException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
-                ctx.status(401).result(resultJson);
-            }
-        });
-        javalin.post("/game", (ctx)-> {
-            GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
-            try {
-                GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
-                String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
-                ctx.status(200).result(resultJson);
             } catch  /*Server <- Handler*/ (BadRequestException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
+                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
                 ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
             }
         });
-            javalin.get("/game", (ctx)-> {
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
+        javalin.post("/game", (ctx)-> {
+            GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
             try {
-                List<GameData> games = GameService.listGames(headerParts[1]);
-                String resultJson = serializer.toJson(Map.of("games", games));
+                String[] headerParts = getHeaderParts(ctx.header("authorization"));
+                GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
+                String resultJson = serializer.toJson(Map.of("gameID", gameData.gameID()));
                 ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
+                ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
+            }
+        });
+            javalin.get("/game", (ctx)-> {
+            try {
+                String[] headerParts = getHeaderParts(ctx.header("authorization"));
+                List<GameData> games = GameService.listGames(headerParts[1]);
+                String resultJson = serializer.toJson(Map.of("games", games));
+                ctx.status(200).result(resultJson);
+            } catch  /*Server <- Handler*/ (BadRequestException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
+                ctx.status(400).result(resultJson);
+            } catch  /*Server <- Handler*/ (UnauthorizedException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
+                ctx.status(401).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
             }
         });
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
             try {
+                String[] headerParts = getHeaderParts(ctx.header("authorization"));
                 GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), headerParts[0], headerParts[1]);
                 String resultJson = serializer.toJson(Map.of("gameID", joinGameInput.gameID()));
                 ctx.status(200).result(resultJson);
@@ -113,6 +134,9 @@ public class Server {
             } catch  /*Server <- Handler*/ (AlreadyTakenException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(403).result(resultJson);
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
             }
         });
     }
@@ -126,8 +150,11 @@ public class Server {
         javalin.stop();
     }
 
-    public static String[] getHeaderParts(String header) {
+    public static String[] getHeaderParts(String header) throws BadRequestException{
         String[] parts = header.split(",");
+        if (parts.length != 2) {
+            throw new BadRequestException("Error: bad request");
+        }
         String usernameToTrim = parts[0].trim();
         String username = usernameToTrim.replaceAll("[\":]", "");
         String authTokenToTrim = parts[1].trim();
