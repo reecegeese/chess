@@ -49,10 +49,10 @@ public class GameService {
         } else {
             GameData gameData = SQLGameDataAccess.getGameData(gameID);
             if (gameData != null && Objects.equals(playerColor, "WHITE")
-                && gameData.whiteUsername() != null) {
+                && !gameData.whiteUsername().isEmpty()) {
                 throw new AlreadyTakenException("Error: already taken");
             } else if (gameData != null && Objects.equals(playerColor, "BLACK")
-                    && gameData.blackUsername() != null) {
+                    && !gameData.blackUsername().isEmpty()) {
                 throw new AlreadyTakenException("Error: already taken");
             } else if (!Objects.equals(playerColor, "WHITE") &&
                     !Objects.equals(playerColor, "BLACK")){
