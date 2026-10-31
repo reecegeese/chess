@@ -28,8 +28,14 @@ public class Server {
         }
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         javalin.delete("/db", (ctx)-> {
-            DeleteService.deleteService();
-            ctx.status(200).result("");
+            try {
+                DeleteService.deleteService();
+                ctx.status(200).result("");
+            } catch  /*Server <- Handler*/ (RuntimeException e){
+                String resultJson = serializer.toJson(Map.of("message", "Error: internal error"));
+                ctx.status(500).result(resultJson);
+            }
+
         });
         javalin.post("/user", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
