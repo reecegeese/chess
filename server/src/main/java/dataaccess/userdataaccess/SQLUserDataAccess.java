@@ -1,6 +1,7 @@
 package dataaccess.userdataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,7 +17,7 @@ public class SQLUserDataAccess {
             String addData = "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)";
             try (var addStatement = conn.prepareStatement(addData)) {
                 addStatement.setString(1, user.username());
-                addStatement.setString(2, user.password());
+                addStatement.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
                 addStatement.setString(3, user.email());
                 addStatement.executeUpdate();
             }
@@ -29,13 +30,15 @@ public class SQLUserDataAccess {
         //DataAccess -> Database
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            String findUser = "SELECT 1 FROM userData WHERE username = ?" +
-                    "AND password = ?;";
+            String findUser = "SELECT password FROM userData WHERE username = ?";
             try (var findStatement = conn.prepareStatement(findUser)) {
                 findStatement.setString(1, user.username());
-                findStatement.setString(2, user.password());
                 try (var returnStatement = findStatement.executeQuery()) {
-                    return returnStatement.next();
+                    if (!returnStatement.next()) {
+                        return false;
+                    }
+                    String hashedPassword = returnStatement.getString("password");
+                    return BCrypt.checkpw(user.password(), hashedPassword);
                 }
             }
         } catch (SQLException e) {
