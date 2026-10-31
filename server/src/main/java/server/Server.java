@@ -78,9 +78,6 @@ public class Server {
                 String[] headerParts = getHeaderParts(ctx.header("authorization"));
                 UserService.logoutUser(headerParts[1]);
                 ctx.status(200).result("");
-            } catch  /*Server <- Handler*/ (BadRequestException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: bad request"));
-                ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
                 ctx.status(401).result(resultJson);
@@ -113,9 +110,6 @@ public class Server {
                 List<GameData> games = GameService.listGames(headerParts[1]);
                 String resultJson = serializer.toJson(Map.of("games", games));
                 ctx.status(200).result(resultJson);
-            } catch  /*Server <- Handler*/ (BadRequestException e){
-                String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
-                ctx.status(400).result(resultJson);
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: unauthorized"));
                 ctx.status(401).result(resultJson);
@@ -125,8 +119,8 @@ public class Server {
             }
         });
         javalin.put("/game", (ctx)-> {
-            JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             try {
+                JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
                 String[] headerParts = getHeaderParts(ctx.header("authorization"));
                 GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), headerParts[0], headerParts[1]);
                 String resultJson = serializer.toJson(Map.of("gameID", joinGameInput.gameID()));
@@ -156,10 +150,10 @@ public class Server {
         javalin.stop();
     }
 
-    public static String[] getHeaderParts(String header) throws BadRequestException{
+    public static String[] getHeaderParts(String header) throws RuntimeException{
         String[] parts = header.split(",");
         if (parts.length != 2) {
-            throw new BadRequestException("Error: bad request");
+            throw new RuntimeException("Error: internal error");
         }
         String usernameToTrim = parts[0].trim();
         String username = usernameToTrim.replaceAll("[\":]", "");
