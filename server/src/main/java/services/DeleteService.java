@@ -1,10 +1,8 @@
 package services;
 
-import dataaccess.authdataaccess.SQLAuthDataAccess;
-import dataaccess.gamedataaccess.SQLGameDataAccess;
-import dataaccess.userdataaccess.SQLUserDataAccess;
-
-import java.sql.SQLException;
+import dataaccess.sql.SQLAuthDataAccess;
+import dataaccess.sql.SQLGameDataAccess;
+import dataaccess.sql.SQLUserDataAccess;
 
 public class DeleteService {
 

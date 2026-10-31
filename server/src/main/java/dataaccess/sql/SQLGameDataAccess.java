@@ -1,4 +1,4 @@
-package dataaccess.gamedataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;

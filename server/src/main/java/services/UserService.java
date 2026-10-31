@@ -3,8 +3,8 @@ package services;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
-import dataaccess.authdataaccess.SQLAuthDataAccess;
-import dataaccess.userdataaccess.SQLUserDataAccess;
+import dataaccess.sql.SQLAuthDataAccess;
+import dataaccess.sql.SQLUserDataAccess;
 import model.UserData;
 
 public class UserService {

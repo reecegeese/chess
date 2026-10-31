@@ -3,8 +3,8 @@ package services;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
-import dataaccess.authdataaccess.SQLAuthDataAccess;
-import dataaccess.gamedataaccess.SQLGameDataAccess;
+import dataaccess.sql.SQLAuthDataAccess;
+import dataaccess.sql.SQLGameDataAccess;
 import model.GameData;
 
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package dataaccess.userdataaccess;
+package dataaccess.sql;
 
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;

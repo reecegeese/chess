@@ -1,4 +1,4 @@
-package dataaccess.authdataaccess;
+package dataaccess.sql;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
