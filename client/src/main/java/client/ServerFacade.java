@@ -1,8 +1,9 @@
 package client;
 
+import client.model.RegisterRequest;
+import client.model.RegisterResult;
 import com.google.gson.Gson;
-import client.ResponseException;
-import model.*;
+import client.exceptions.ResponseException;
 
 import java.net.*;
 import java.net.http.*;
@@ -18,7 +19,7 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResult register(RegisterRequest request) {
+    public RegisterResult register(RegisterRequest request) throws ResponseException {
         var builtRequest = buildRequest("POST", "/user", request);
         var response = sendRequest(builtRequest);
         return handleResponse(response, RegisterResult.class);

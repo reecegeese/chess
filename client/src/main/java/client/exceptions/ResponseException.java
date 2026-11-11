@@ -1,4 +1,4 @@
-package client;
+package client.exceptions;
 
 /**
  * Indicates response was bad
