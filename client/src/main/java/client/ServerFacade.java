@@ -1,7 +1,6 @@
 package client;
 
 import client.model.RegisterRequest;
-import client.model.RegisterResult;
 import com.google.gson.Gson;
 import client.exceptions.ResponseException;
 
@@ -19,10 +18,8 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResult register(RegisterRequest request) throws ResponseException {
-        var builtRequest = buildRequest("POST", "/user", request);
-        var response = sendRequest(builtRequest);
-        return handleResponse(response, RegisterResult.class);
+    public void register(RegisterRequest request) {
+        buildRequest("POST", "/user", request);
     }
 /*
     public LogInResult register(LogInRequest request) {
@@ -58,7 +55,7 @@ public class ServerFacade {
             return BodyPublishers.noBody();
         }
     }
-
+/*
     private HttpResponse<String> sendRequest(HttpRequest request) throws ResponseException {
         try {
             return client.send(request, BodyHandlers.ofString());
@@ -88,4 +85,5 @@ public class ServerFacade {
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
+    */
 }

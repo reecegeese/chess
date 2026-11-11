@@ -15,11 +15,11 @@ public class Repl implements NotificationHandler{
     public void run() {
         System.out.println("♕ Welcome to 240 Chess. Type Help to get started ♕");
         System.out.print(client.help());
-        Scanner scanner = new Scanner(system.in);
+        Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
             printPrompt();
-            String line = Scanner.nextLine();
+            String line = scanner.nextLine();
             try {
                 result = client.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
@@ -33,5 +33,9 @@ public class Repl implements NotificationHandler{
 
     public void notify(Notification notification) {
         System.out.println(SET_TEXT_COLOR_RED + notification.message());
+    }
+
+    private void printPrompt() {
+        System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 }

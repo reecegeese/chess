@@ -26,8 +26,8 @@ public class ChessClient {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
-                case "login" -> logIn(params);
-                case "logOut" -> logOut();
+                //case "login" -> logIn(params);
+                //case "logOut" -> logOut();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -45,7 +45,7 @@ public class ChessClient {
         }
         throw new ResponseException("Expected: <username>, <password>, <email>");
     }
-
+/*
     public String logIn(String... params) throws ResponseException {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
@@ -62,11 +62,12 @@ public class ChessClient {
         state = State.LOGGEDOUT;
         return String.format("%s logged out", visitorName);
     }
-
+*/
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
-                    - logIn <yourname>
+                    - register <username>, <password>, <email>
+                    - logIn <username>
                     - quit
                     """;
         }
