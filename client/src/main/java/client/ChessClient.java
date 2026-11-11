@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import com.google.gson.Gson;
 import client.websocket.NotificationHandler;
-import server.ServerFacade;
-import client.websocket.WebSocketFacade;
+import client.ServerFacade;
 import webSocketMessages.Notification;
+import client.State.*;
 
 public class ChessClient {
     private String visitorName;
@@ -14,7 +14,7 @@ public class ChessClient {
     private final String serverURL;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
-    private State state = State.SIGNEDOUT;
+    private State state = State.LOGGEDOUT;
 
     public ChessClient(String serverURL, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverURL);
