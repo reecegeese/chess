@@ -10,6 +10,10 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
@@ -21,7 +25,16 @@ public class ServerFacade {
     public void register(RegisterRequest request) {
         buildRequest("POST", "/user", request);
     }
-/*
+    /*
+    public void logIn(String visitorName) throws ResponseException {
+        try {
+            var action = new Action(Action.Type.ENTER, visitorName);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+        }
+    }
+
     public LogInResult register(LogInRequest request) {
         //http request
         //call web api

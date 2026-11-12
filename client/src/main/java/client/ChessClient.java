@@ -12,12 +12,11 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class ChessClient {
     private String visitorName;
-    private final ServerFacade server;
     private ServerFacade sf;
     private State state = State.LOGGEDOUT;
 
     public ChessClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+        sf = new ServerFacade(serverUrl);
     }
 
     public void run() {
@@ -46,6 +45,7 @@ public class ChessClient {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
+                //case "logIn" -> logIn(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -61,14 +61,14 @@ public class ChessClient {
             state = State.LOGGEDIN;
             return String.format("You have registered as %s.", params[0]);
         }
-        throw new ResponseException("Expected: <username>, <password>, <email>");
+        throw new ResponseException("Expected: register <username>, <password>, <email>");
     }
     /*
     public String logIn(String... params) throws ResponseException {
         if (params.length >= 1) {
+            LogInRequest request = new RegisterRequest(params[0], params[1], params[2]);
+            sf.logIn(request);
             state = State.LOGGEDIN;
-            visitorName = String.join("-", params);
-            sf.enterChessClient(visitorName);
             return String.format("You signed in as %s.", visitorName);
         }
         throw new ResponseException("Expected: <yourname>");
