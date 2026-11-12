@@ -81,9 +81,8 @@ public class ServerFacade {
 
         return null;
     }
-
+*/
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
-    */
 }

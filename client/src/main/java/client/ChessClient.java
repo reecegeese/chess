@@ -30,7 +30,7 @@ public class ChessClient {
             String line = scanner.nextLine();
             try {
                 result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_GREEN + result);
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(msg);
@@ -41,13 +41,11 @@ public class ChessClient {
 
     public String eval(String input) {
         try {
-            var tokens = input.toLowerCase().split("");
+            String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
-                //case "login" -> logIn(params);
-                //case "logOut" -> logOut();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -65,7 +63,7 @@ public class ChessClient {
         }
         throw new ResponseException("Expected: <username>, <password>, <email>");
     }
-/*
+    /*
     public String logIn(String... params) throws ResponseException {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
@@ -76,13 +74,13 @@ public class ChessClient {
         throw new ResponseException("Expected: <yourname>");
     }
 
-    public String logOut() throws ResponseException {
-        assertSignedIn();
-        sf.leaveChessClient(visitorName);
-        state = State.LOGGEDOUT;
-        return String.format("%s logged out", visitorName);
-    }
-*/
+        public String logOut() throws ResponseException {
+            assertSignedIn();
+            sf.leaveChessClient(visitorName);
+            state = State.LOGGEDOUT;
+            return String.format("%s logged out", visitorName);
+        }
+    */
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
