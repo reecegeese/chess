@@ -46,6 +46,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -116,6 +117,20 @@ public class ChessClient {
                 JoinRequest request = new JoinRequest(params[0], params[1]);
                 sf.joinGame(request);
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
+            }
+        } catch (ResponseException ex) {
+            throw new ResponseException("You are not signed in");
+        }
+        return "You are not signed in";
+    }
+
+    public String observeGame(String... params) throws ResponseException {
+        try {
+            assertSignedIn();
+            if (params.length == 1) {
+                ObserveRequest request = new ObserveRequest(params[0]);
+                sf.observeGame(request);
+                return String.format("You are observing the game %s.", params[0]);
             }
         } catch (ResponseException ex) {
             throw new ResponseException("You are not signed in");
