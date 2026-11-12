@@ -2,17 +2,13 @@ package client;
 
 import java.util.Arrays;
 import java.util.Scanner;
-
-import client.exceptions.ResponseException;
-import client.model.Notification;
-import client.model.RegisterRequest;
-
+import client.exceptions.*;
+import client.model.*;
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class ChessClient {
     private String visitorName;
-    private ServerFacade sf;
+    private final ServerFacade sf;
     private State state = State.LOGGEDOUT;
 
     public ChessClient(String serverUrl) {
@@ -45,7 +41,8 @@ public class ChessClient {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
-                //case "logIn" -> logIn(params);
+                case "login" -> logIn(params);
+                case "logout" -> logOut();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -55,7 +52,7 @@ public class ChessClient {
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 3) {
             RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
             sf.register(request);
             state = State.LOGGEDIN;
@@ -63,38 +60,35 @@ public class ChessClient {
         }
         throw new ResponseException("Expected: register <username>, <password>, <email>");
     }
-    /*
+
     public String logIn(String... params) throws ResponseException {
-        if (params.length >= 1) {
-            LogInRequest request = new RegisterRequest(params[0], params[1], params[2]);
+        if (params.length == 2) {
+            LogInRequest request = new LogInRequest(params[0], params[1]);
             sf.logIn(request);
             state = State.LOGGEDIN;
-            return String.format("You signed in as %s.", visitorName);
+            return String.format("You have logged in as %s.", params[0]);
         }
-        throw new ResponseException("Expected: <yourname>");
+        throw new ResponseException("Expected: logIn <username>, <password>");
     }
 
-        public String logOut() throws ResponseException {
-            assertSignedIn();
-            sf.leaveChessClient(visitorName);
-            state = State.LOGGEDOUT;
-            return String.format("%s logged out", visitorName);
-        }
-    */
+    public String logOut() {
+        sf.logOut();
+        state = State.LOGGEDOUT;
+        return "You have logged out";
+    }
+
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
+                    - help
                     - register <username>, <password>, <email>
-                    - logIn <username>
+                    - login <username>, <password>
                     - quit
                     """;
         }
         return """
-                - logOut
-                - createGame
-                - listGams
-                - playGame
-                - observeGame
+                - help
+                - logout
                 - quit
                 """;
     }

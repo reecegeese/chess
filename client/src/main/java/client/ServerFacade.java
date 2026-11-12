@@ -1,8 +1,8 @@
 package client;
 
-import client.model.RegisterRequest;
+import client.exceptions.*;
+import client.model.*;
 import com.google.gson.Gson;
-import client.exceptions.ResponseException;
 
 import java.net.*;
 import java.net.http.*;
@@ -25,16 +25,15 @@ public class ServerFacade {
     public void register(RegisterRequest request) {
         buildRequest("POST", "/user", request);
     }
-    /*
-    public void logIn(String visitorName) throws ResponseException {
-        try {
-            var action = new Action(Action.Type.ENTER, visitorName);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
-        }
+
+    public void logIn(LogInRequest request) {
+        buildRequest("POST", "/session", request);
     }
 
+    public void logOut() {
+        buildRequest("DELETE", "/session", "");
+    }
+    /*
     public LogInResult register(LogInRequest request) {
         //http request
         //call web api
@@ -68,15 +67,15 @@ public class ServerFacade {
             return BodyPublishers.noBody();
         }
     }
-/*
+
     private HttpResponse<String> sendRequest(HttpRequest request) throws ResponseException {
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+            throw new ResponseException("Response Exception");
         }
     }
-
+/*
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
