@@ -33,6 +33,10 @@ public class ServerFacade {
     }
 
     public void createGame(CreateRequest request) { buildRequest("POST", "/game", request); }
+
+    public void listGames() { buildRequest("GET", "/game", ""); }
+
+    public void joinGame(JoinRequest request) { buildRequest("PUT", "/game", request); }
     /*
     public LogInResult register(LogInRequest request) {
         //http request
