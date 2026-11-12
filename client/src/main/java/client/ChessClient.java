@@ -43,6 +43,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> logIn(params);
                 case "logout" -> logOut();
+                case "create" -> createGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -58,7 +59,7 @@ public class ChessClient {
             state = State.LOGGEDIN;
             return String.format("You have registered as %s.", params[0]);
         }
-        throw new ResponseException("Expected: register <username>, <password>, <email>");
+        throw new ResponseException("Expected: register <USERNAME>, <PASSWORD>, <EMAIL>");
     }
 
     public String logIn(String... params) throws ResponseException {
@@ -68,28 +69,51 @@ public class ChessClient {
             state = State.LOGGEDIN;
             return String.format("You have logged in as %s.", params[0]);
         }
-        throw new ResponseException("Expected: logIn <username>, <password>");
+        throw new ResponseException("Expected: logIn <USERNAME>, <PASSWORD>");
     }
 
-    public String logOut() {
-        sf.logOut();
-        state = State.LOGGEDOUT;
-        return "You have logged out";
+    public String logOut() throws ResponseException {
+        try {
+            assertSignedIn();
+            sf.logOut();
+            state = State.LOGGEDOUT;
+            return "You have logged out";
+        } catch (ResponseException ex) {
+            throw new ResponseException("You are not signed in");
+        }
+    }
+
+    public String createGame(String... params) throws ResponseException {
+        try {
+            assertSignedIn();
+            if (params.length == 1) {
+                CreateRequest request = new CreateRequest(params[0]);
+                sf.createGame(request);
+                return String.format("You have created the game %s.", params[0]);
+            }
+        } catch (ResponseException ex) {
+            throw new ResponseException("You are not signed in");
+        }
+        return "You are not signed in";
     }
 
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
-                    - help
-                    - register <username>, <password>, <email>
-                    - login <username>, <password>
+                    - register <USERNAME>, <PASSWORD>, <EMAIL>
+                    - login <USERNAME>, <PASSWORD>
                     - quit
+                    - help
                     """;
         }
         return """
-                - help
+                - create <NAME>
+                - list
+                - join <ID> [WHITE][BLACK]
+                - observe <ID>
                 - logout
                 - quit
+                - help
                 """;
     }
 

@@ -26,23 +26,15 @@ public class ServerFacade {
         buildRequest("POST", "/user", request);
     }
 
-    public void logIn(LogInRequest request) {
-        buildRequest("POST", "/session", request);
-    }
+    public void logIn(LogInRequest request) { buildRequest("POST", "/session", request); }
 
     public void logOut() {
         buildRequest("DELETE", "/session", "");
     }
+
+    public void createGame(CreateRequest request) { buildRequest("POST", "/game", request); }
     /*
     public LogInResult register(LogInRequest request) {
-        //http request
-        //call web api
-        //get result
-        //deserialize
-        //return result
-    }
-
-    public JoinGameResult register(JoinGameRequest request) {
         //http request
         //call web api
         //get result
