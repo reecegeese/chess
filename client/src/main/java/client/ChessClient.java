@@ -1,22 +1,42 @@
 package client;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 import client.exceptions.ResponseException;
+import client.model.Notification;
 import client.model.RegisterRequest;
+
+import static ui.EscapeSequences.*;
+import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class ChessClient {
     private String visitorName;
     private final ServerFacade server;
-    private final String serverURL;
-    private final NotificationHandler notificationHandler;
     private ServerFacade sf;
     private State state = State.LOGGEDOUT;
 
-    public ChessClient(String serverURL, NotificationHandler notificationHandler) {
-        server = new ServerFacade(serverURL);
-        this.serverURL = serverURL;
-        this.notificationHandler = notificationHandler;
+    public ChessClient(String serverUrl) {
+        server = new ServerFacade(serverUrl);
+    }
+
+    public void run() {
+        System.out.println("♕ Welcome to 240 Chess. Type Help to get started ♕");
+        System.out.print(help());
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals("quit")) {
+            printPrompt();
+            String line = scanner.nextLine();
+            try {
+                result = eval(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e){
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+        System.out.println();
     }
 
     public String eval(String input) {
@@ -85,5 +105,13 @@ public class ChessClient {
         if (state == State.LOGGEDOUT) {
             throw new ResponseException("You must sign in");
         }
+    }
+
+    public void notify(Notification notification) {
+        System.out.println(SET_TEXT_COLOR_RED + notification.message());
+    }
+
+    private void printPrompt() {
+        System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 }
