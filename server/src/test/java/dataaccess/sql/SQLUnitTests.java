@@ -113,10 +113,10 @@ public class SQLUnitTests {
         String authTokenToTrim = parts[1].trim();
         String authToken = authTokenToTrim.replaceAll("[\":]", "");
         GameData createResult = GameService.createGame("testGame", authToken);
-        Assertions.assertEquals(null, createResult.whiteUsername());
-        Assertions.assertEquals(null, createResult.blackUsername());
+        Assertions.assertNull(createResult.whiteUsername());
+        Assertions.assertNull(createResult.blackUsername());
         Assertions.assertEquals("testGame", createResult.gameName());
-        Assertions.assertEquals(null, createResult.game());
+        Assertions.assertNull(createResult.game());
     }
 
     @Test

@@ -58,9 +58,9 @@ public class ChessClient {
     public String register(String... params) throws ResponseException {
         if (params.length == 3) {
             RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
-            sf.register(request);
+            RegisterResult result = sf.register(request);
             state = State.LOGGEDIN;
-            return String.format("You have registered as %s.", params[0]);
+            return String.format("You have registered as %s.", result.username());
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: register <USERNAME>, <PASSWORD>, <EMAIL>");
     }

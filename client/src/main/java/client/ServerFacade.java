@@ -9,10 +9,7 @@ import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
-
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -81,10 +78,6 @@ public class ServerFacade {
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
-            var body = response.body();
-            if (body != null) {
-                throw ResponseException.fromJson(body);
-            }
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
         if (responseClass != null) {
