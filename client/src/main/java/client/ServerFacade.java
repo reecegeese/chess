@@ -22,32 +22,36 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void register(RegisterRequest request) {
-        buildRequest("POST", "/user", request);
+    public RegisterResult register(RegisterRequest userData) throws ResponseException {
+        var request = buildRequest("POST", "/user", userData);
+        var response = sendRequest(request);
+        return handleResponse(response, RegisterResult.class);
     }
 
-    public void logIn(LogInRequest request) { buildRequest("POST", "/session", request); }
+    public void logIn(LogInRequest request) throws ResponseException {
+        buildRequest("POST", "/session", request);
+    }
 
-    public void logOut() {
+    public void logOut() throws ResponseException {
         buildRequest("DELETE", "/session", "");
     }
 
-    public void createGame(CreateRequest request) { buildRequest("POST", "/game", request); }
-
-    public void listGames() { buildRequest("GET", "/game", ""); }
-
-    public void joinGame(JoinRequest request) { buildRequest("PUT", "/game", request); }
-
-    public void observeGame(ObserveRequest request) { buildRequest("PUT", "/game", request); }
-    /*
-    public LogInResult register(LogInRequest request) {
-        //http request
-        //call web api
-        //get result
-        //deserialize
-        //return result
+    public void createGame(CreateRequest request) throws ResponseException {
+        buildRequest("POST", "/game", request);
     }
-*/
+
+    public void listGames() throws ResponseException {
+        buildRequest("GET", "/game", "");
+    }
+
+    public void joinGame(JoinRequest request) throws ResponseException {
+        buildRequest("PUT", "/game", request);
+    }
+
+    public void observeGame(ObserveRequest request) throws ResponseException {
+        buildRequest("PUT", "/game", request);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
@@ -70,10 +74,10 @@ public class ServerFacade {
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ResponseException("Response Exception");
+            throw new ResponseException(ResponseException.Code.ClientError, "Response Exception");
         }
     }
-/*
+
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
@@ -81,17 +85,14 @@ public class ServerFacade {
             if (body != null) {
                 throw ResponseException.fromJson(body);
             }
-
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
-
         if (responseClass != null) {
             return new Gson().fromJson(response.body(), responseClass);
         }
-
         return null;
     }
-*/
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }

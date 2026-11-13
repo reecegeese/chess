@@ -62,7 +62,7 @@ public class ChessClient {
             state = State.LOGGEDIN;
             return String.format("You have registered as %s.", params[0]);
         }
-        throw new ResponseException("Expected: register <USERNAME>, <PASSWORD>, <EMAIL>");
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: register <USERNAME>, <PASSWORD>, <EMAIL>");
     }
 
     public String logIn(String... params) throws ResponseException {
@@ -72,7 +72,7 @@ public class ChessClient {
             state = State.LOGGEDIN;
             return String.format("You have logged in as %s.", params[0]);
         }
-        throw new ResponseException("Expected: logIn <USERNAME>, <PASSWORD>");
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: logIn <USERNAME>, <PASSWORD>");
     }
 
     public String logOut() throws ResponseException {
@@ -82,7 +82,7 @@ public class ChessClient {
             state = State.LOGGEDOUT;
             return "You have logged out";
         } catch (ResponseException ex) {
-            throw new ResponseException("You are not signed in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
     }
 
@@ -95,7 +95,7 @@ public class ChessClient {
                 return String.format("You have created the game %s.", params[0]);
             }
         } catch (ResponseException ex) {
-            throw new ResponseException("You are not signed in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
         return "You are not signed in";
     }
@@ -106,7 +106,7 @@ public class ChessClient {
             sf.listGames();
             return "";
         } catch (ResponseException ex) {
-            throw new ResponseException("You are not signed in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
     }
 
@@ -119,7 +119,7 @@ public class ChessClient {
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
             }
         } catch (ResponseException ex) {
-            throw new ResponseException("You are not signed in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
         return "You are not signed in";
     }
@@ -133,7 +133,7 @@ public class ChessClient {
                 return String.format("You are observing the game %s.", params[0]);
             }
         } catch (ResponseException ex) {
-            throw new ResponseException("You are not signed in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
         return "You are not signed in";
     }
@@ -160,7 +160,7 @@ public class ChessClient {
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.LOGGEDOUT) {
-            throw new ResponseException("You must sign in");
+            throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }
     }
 
