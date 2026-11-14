@@ -32,7 +32,8 @@ public class ServerFacade {
     }
 
     public void logOut() throws ResponseException {
-        buildRequest("DELETE", "/session", "");
+        var request = buildRequest("DELETE", "/session", "");
+        sendRequest(request);
     }
 
     public void createGame(CreateRequest request) throws ResponseException {

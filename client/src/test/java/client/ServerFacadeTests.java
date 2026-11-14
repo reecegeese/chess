@@ -69,12 +69,28 @@ public class ServerFacadeTests {
     @Test
     @Order(4)
     @DisplayName("Bad Login User")
-    void badLogIn() throws Exception {
-        IllegalArgumentException illegal = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    sf.logIn(new LogInRequest("player2", "noThanks"));
-                }
+    void badLogIn() {
+        assertThrows(IllegalArgumentException.class,
+                () -> sf.logIn(new LogInRequest("player2", "noThanks"))
+        );
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Good Logout")
+    void goodLogOut() throws Exception {
+        sf.logIn(new LogInRequest("player2", "1234"));
+        sf.logOut();
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Bad Logout")
+    void badLogOut() throws Exception {
+        sf.logIn(new LogInRequest("player2", "1234"));
+        sf.logOut();
+        assertThrows(IllegalArgumentException.class,
+                () -> sf.logIn(new LogInRequest("player2", "noThanks"))
         );
     }
 }
