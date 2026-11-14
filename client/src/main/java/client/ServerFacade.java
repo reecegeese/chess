@@ -25,8 +25,10 @@ public class ServerFacade {
         return handleResponse(response, RegisterResult.class);
     }
 
-    public void logIn(LogInRequest request) throws ResponseException {
-        buildRequest("POST", "/session", request);
+    public RegisterResult logIn(LogInRequest userData) throws ResponseException {
+        var request = buildRequest("POST", "/session", userData);
+        var response = sendRequest(request);
+        return handleResponse(response, RegisterResult.class);
     }
 
     public void logOut() throws ResponseException {

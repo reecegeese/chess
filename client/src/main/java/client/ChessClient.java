@@ -68,9 +68,9 @@ public class ChessClient {
     public String logIn(String... params) throws ResponseException {
         if (params.length == 2) {
             LogInRequest request = new LogInRequest(params[0], params[1]);
-            sf.logIn(request);
+            RegisterResult result = sf.logIn(request);
             state = State.LOGGEDIN;
-            return String.format("You have logged in as %s.", params[0]);
+            return String.format("You have logged in as %s.", result.username());
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: logIn <USERNAME>, <PASSWORD>");
     }

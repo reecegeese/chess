@@ -1,3 +1,3 @@
 package client.model;
 
-public record LogInRequest(String username, String authToken) {}
+public record LogInRequest(String username, String password) {}

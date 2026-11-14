@@ -1,23 +1,40 @@
 package client;
 
+import client.exceptions.ResponseException;
 import client.model.*;
+import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
+import dataaccess.UnauthorizedException;
+import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
+import services.DeleteService;
+import services.UserService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
     private static Server server;
     static ServerFacade sf;
+    private static RegisterRequest existingUser;
+    private static RegisterRequest existingResult;
+    private static String existingAuthToken;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws ResponseException {
         server = new Server();
         var port = server.run(0);
         sf = new ServerFacade("http://localhost:" + port);
         System.out.println("Started test HTTP server on " + port);
+        existingUser = new RegisterRequest("player2", "1234", "p2@email.com");
+    }
+
+    @BeforeEach
+    public void setup() throws ResponseException {
+        DeleteService.deleteService();
+        //one user already logged in
+        sf.register(existingUser);
     }
 
     @AfterAll
@@ -38,9 +55,26 @@ public class ServerFacadeTests {
     @DisplayName("Good Register User")
     void register() throws Exception {
         RegisterResult result = sf.register(new RegisterRequest("player1", "password", "p1@email.com"));
-        System.out.println(result);
-        //assertTrue(result.authToken().length() > 10);
         assertEquals("player1", result.username());
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("Good Login User")
+    void goodLogIn() throws Exception {
+        RegisterResult result = sf.logIn(new LogInRequest("player2", "1234"));
+        assertEquals("player2", result.username());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Bad Login User")
+    void badLogIn() throws Exception {
+        IllegalArgumentException illegal = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    sf.logIn(new LogInRequest("player2", "noThanks"));
+                }
+        );
+    }
 }
