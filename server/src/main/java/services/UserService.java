@@ -21,7 +21,7 @@ public class UserService {
             SQLUserDataAccess.addUserData(user);
             String authToken = SQLAuthDataAccess.createAuthToken();
             SQLAuthDataAccess.addAuthData(authToken, user.username());
-            return authToken;
+            return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
         }
         throw new AlreadyTakenException("Error: already taken");
     }
@@ -36,7 +36,7 @@ public class UserService {
             //Service -> DataAccess
             String authToken = SQLAuthDataAccess.createAuthToken();
             SQLAuthDataAccess.addAuthData(authToken, user.username());
-            return authToken;
+            return "\"" + user.username() + "\"\":\"\", \"" + authToken + "\":\"\"";
         }
         throw new UnauthorizedException("Error: unauthorized");
     }

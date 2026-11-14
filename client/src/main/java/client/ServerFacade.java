@@ -33,13 +33,13 @@ public class ServerFacade {
     }
 
     public void logOut() throws ResponseException {
-        buildRequest("DELETE", "/session", "");
+        var request = buildRequest("DELETE", "/session", "");
+        sendRequest(request);
     }
 
-    public GameData createGame(CreateGameRequest createData) throws ResponseException {
-        var request = buildRequest("POST", "/game", createData);
+    public GameData createGame(CreateGameRequest createRequest) throws ResponseException {
+        var request = buildRequest("POST", "/game", createRequest);
         var response = sendRequest(request);
-        System.out.println("At Handle Response");
         return handleResponse(response, GameData.class);
     }
 
@@ -83,7 +83,6 @@ public class ServerFacade {
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
-        System.out.println("Status: " + status);
         if (!isSuccessful(status)) {
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
