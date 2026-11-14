@@ -72,13 +72,9 @@ public class Server {
         });
         javalin.post("/game", (ctx)-> {
             GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
-            System.out.println("ctx: " + ctx);
-            System.out.println("header map: " + ctx.headerMap());
-            System.out.println("context body: " + ctx.body());
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
-            System.out.println("create game");
-            GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
-            ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID())));
+            GameData gameData = GameService.createGame(gameName.gameName(), ctx.header("authorization"));
+            ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID(),
+                    "gameName", gameData.gameName())));
         });
         javalin.get("/game", (ctx)-> {
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
@@ -103,14 +99,10 @@ public class Server {
     }
 
     public static String[] getHeaderParts(String header) throws RuntimeException{
-        System.out.println("split");
-        System.out.println("header: " + header);
         String[] parts = header.split(",");
-        System.out.println("post split");
         if (parts.length != 2) {
             throw new RuntimeException("Error: internal error");
         }
-        System.out.println("trimming");
         String usernameToTrim = parts[0].trim();
         String username = usernameToTrim.replaceAll("[\":]", "");
         String authTokenToTrim = parts[1].trim();

@@ -87,17 +87,15 @@ public class ChessClient {
     }
 
     public String createGame(String... params) throws ResponseException {
-        try {
-            assertSignedIn();
-            if (params.length == 2) {
-                CreateGameRequest request = new CreateGameRequest(params[0], params[1]);
-                sf.createGame(request);
-                return String.format("You have created the game %s.", params[0]);
-            }
-        } catch (ResponseException ex) {
-            throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
+        if (state == State.LOGGEDOUT) {
+            throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }
-        return "You are not signed in";
+        if (params.length == 2) {
+            CreateGameRequest request = new CreateGameRequest(params[0], params[1]);
+            sf.createGame(request);
+            return String.format("You have created the game %s.", params[0]);
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
     }
 
     public String listGames() throws ResponseException {

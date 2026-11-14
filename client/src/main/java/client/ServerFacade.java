@@ -60,7 +60,15 @@ public class ServerFacade {
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
-            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Content-Type", "application/json");   // was setHeader
+        }
+        String authToken = null;
+        String text = body.toString();
+        if (!text.contains("password=")) {
+            authToken = text.replaceAll(".*authToken=([^],]*).*", "$1");
+        }
+       if (authToken != null) {
+            request.header("Authorization", authToken);
         }
         return request.build();
     }
@@ -91,7 +99,6 @@ public class ServerFacade {
         }
         return null;
     }
-
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }

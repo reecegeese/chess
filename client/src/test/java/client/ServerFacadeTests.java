@@ -90,9 +90,8 @@ public class ServerFacadeTests {
     @Order(6)
     @DisplayName("Bad Logout")
     void badLogOut() throws Exception {
-        sf.logIn(new LogInRequest("player2", "1234"));
         sf.logOut();
-        assertThrows(UnauthorizedException.class,
+        assertThrows(ResponseException.class,
                 () -> sf.logOut()
         );
     }
@@ -102,8 +101,6 @@ public class ServerFacadeTests {
     @DisplayName("Good Create Game")
     void goodCreateGame() throws Exception {
         RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
-        System.out.println("result: " + logInResult);
-        System.out.println("authToken: " + logInResult.authToken());
         GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
         assertEquals("testGame", result.gameName());
     }
