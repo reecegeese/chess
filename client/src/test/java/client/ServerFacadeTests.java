@@ -2,10 +2,10 @@ package client;
 
 import client.exceptions.ResponseException;
 import client.model.*;
+import model.*;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.UnauthorizedException;
-import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import services.DeleteService;
@@ -92,5 +92,15 @@ public class ServerFacadeTests {
         assertThrows(IllegalArgumentException.class,
                 () -> sf.logIn(new LogInRequest("player2", "noThanks"))
         );
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Good Create Game")
+    void goodCreateGame() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
+        System.out.println("Assert Equal");
+        assertEquals("testGame", result.gameName());
     }
 }

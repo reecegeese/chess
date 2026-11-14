@@ -72,7 +72,10 @@ public class Server {
         });
         javalin.post("/game", (ctx)-> {
             GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
+            System.out.println("header");
+            System.out.println(ctx.headerMap());
             String[] headerParts = getHeaderParts(ctx.header("authorization"));
+            System.out.println("create game");
             GameData gameData = GameService.createGame(gameName.gameName(), headerParts[1]);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID())));
         });

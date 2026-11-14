@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 import client.exceptions.*;
 import client.model.*;
+import model.*;
+
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
@@ -89,10 +91,10 @@ public class ChessClient {
     public String createGame(String... params) throws ResponseException {
         try {
             assertSignedIn();
-            if (params.length == 1) {
-                CreateRequest request = new CreateRequest(params[0]);
-                sf.createGame(request);
-                return String.format("You have created the game %s.", params[0]);
+            if (params.length == 2) {
+                CreateGameRequest request = new CreateGameRequest(params[0], params[1]);
+                GameData result = sf.createGame(request);
+                return String.format("You have created the game %s.", result.gameName());
             }
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");

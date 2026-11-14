@@ -2,6 +2,7 @@ package client;
 
 import client.exceptions.*;
 import client.model.*;
+import model.*;
 import com.google.gson.Gson;
 
 import java.net.*;
@@ -36,8 +37,11 @@ public class ServerFacade {
         sendRequest(request);
     }
 
-    public void createGame(CreateRequest request) throws ResponseException {
-        buildRequest("POST", "/game", request);
+    public GameData createGame(CreateGameRequest createData) throws ResponseException {
+        var request = buildRequest("POST", "/game", createData);
+        var response = sendRequest(request);
+        System.out.println("At Handle Response");
+        return handleResponse(response, GameData.class);
     }
 
     public void listGames() throws ResponseException {
@@ -80,6 +84,7 @@ public class ServerFacade {
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
+        System.out.println("Status: " + status);
         if (!isSuccessful(status)) {
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
