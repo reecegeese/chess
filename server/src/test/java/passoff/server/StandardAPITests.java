@@ -30,7 +30,6 @@ public class StandardAPITests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
         existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
         newUser = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
@@ -40,7 +39,6 @@ public class StandardAPITests {
     @BeforeEach
     public void setup() {
         serverFacade.clear();
-
         //one user already logged in
         TestAuthResult regResult = serverFacade.register(existingUser);
         existingAuth = regResult.getAuthToken();
@@ -145,7 +143,6 @@ public class StandardAPITests {
     public void logoutSuccess() {
         //log out existing user
         TestResult result = serverFacade.logout(existingAuth);
-
         assertHttpOk(result);
     }
 
