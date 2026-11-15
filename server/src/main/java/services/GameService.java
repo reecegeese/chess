@@ -55,7 +55,8 @@ public class GameService {
                     && !gameData.blackUsername().isEmpty()) {
                 throw new AlreadyTakenException("Error: already taken");
             } else if (!Objects.equals(playerColor, "WHITE") &&
-                    !Objects.equals(playerColor, "BLACK")){
+                    !Objects.equals(playerColor, "BLACK") &&
+                    !Objects.equals(playerColor, "WATCH")){
                 throw new BadRequestException("Error: bad request");
             }
         }
@@ -67,9 +68,12 @@ public class GameService {
             if (Objects.equals(playerColor, "WHITE")) {
                 SQLGameDataAccess.addGameData(gameID, username,
                         gameData.blackUsername(), gameData.gameName(), gameData.game());
-            } else {
+            } else if (Objects.equals(playerColor, "BLACK")) {
                 SQLGameDataAccess.addGameData(gameID, gameData.whiteUsername(),
                         username, gameData.gameName(), gameData.game());
+            } else /*PlayerColor = watch*/ {
+                SQLGameDataAccess.addGameData(gameID, gameData.whiteUsername(),
+                        gameData.blackUsername(), gameData.gameName(), gameData.game());
             }
             return;
         }

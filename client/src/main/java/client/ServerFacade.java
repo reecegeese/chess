@@ -59,8 +59,10 @@ public class ServerFacade {
         handleResponse(response, GameData.class);
     }
 
-    public void observeGame(ObserveRequest request) throws ResponseException {
-        buildRequest("PUT", "/game", request);
+    public void observeGame(JoinGameRequest joinGameRequest) throws Exception {
+        var request = buildRequest("PUT", "/game", joinGameRequest);
+        var response = sendRequest(request);
+        handleResponse(response, GameData.class);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body) {

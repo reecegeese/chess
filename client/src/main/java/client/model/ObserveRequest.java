@@ -1,3 +1,3 @@
 package client.model;
 
-public record ObserveRequest(String ID) {}
+public record ObserveRequest(int ID, String watch) {}

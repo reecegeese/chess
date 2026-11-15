@@ -150,4 +150,26 @@ public class ServerFacadeTests {
                 () -> sf.joinGame(joinGameRequest)
         );
     }
+
+    @Test
+    @Order(10)
+    @DisplayName("Good Observe Game")
+    void goodObserveGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
+        JoinGameRequest joinGameRequest = new JoinGameRequest(result.gameID(), "watch", "player2", logInResult.authToken());
+        sf.joinGame(joinGameRequest);
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Bad Observe Game")
+    void badObserveGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
+        JoinGameRequest joinGameRequest = new JoinGameRequest(result.gameID(), "watch", "player2", "no authToken");
+        assertThrows(UnauthorizedException.class,
+                () -> sf.joinGame(joinGameRequest)
+        );
+    }
 }

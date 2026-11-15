@@ -110,18 +110,6 @@ public class Server {
         javalin.stop();
     }
 
-    public static String[] getHeaderParts(String header) throws RuntimeException{
-        String[] parts = header.split(",");
-        if (parts.length != 2) {
-            throw new RuntimeException("Error: internal error");
-        }
-        String usernameToTrim = parts[0].trim();
-        String username = usernameToTrim.replaceAll("[\":]", "");
-        String authTokenToTrim = parts[1].trim();
-        String authToken = authTokenToTrim.replaceAll("[\":]", "");
-        return new String[] {username, authToken};
-    }
-
     private String errorJson(String message) {
         return serializer.toJson(Map.of("message", message));
     }
