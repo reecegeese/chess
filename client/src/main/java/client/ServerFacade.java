@@ -53,8 +53,10 @@ public class ServerFacade {
         handleResponse(response, ListGamesResult.class);
     }
 
-    public void joinGame(JoinRequest request) throws ResponseException {
-        buildRequest("PUT", "/game", request);
+    public void joinGame(JoinGameRequest joinGameRequest) throws Exception {
+        var request = buildRequest("PUT", "/game", joinGameRequest);
+        var response = sendRequest(request);
+        handleResponse(response, GameData.class);
     }
 
     public void observeGame(ObserveRequest request) throws ResponseException {

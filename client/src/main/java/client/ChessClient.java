@@ -108,14 +108,16 @@ public class ChessClient {
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
-        return "";
+        return "You are not signed in";
     }
 
     public String joinGame(String... params) throws Exception {
         try {
             assertSignedIn();
             if (params.length == 2) {
-                JoinRequest request = new JoinRequest(params[0], params[1]);
+                int gameID = Integer.parseInt(params[0]);
+                System.out.println(params[1]);
+                JoinGameRequest request = new JoinGameRequest(gameID, params[1], currentUserData.username(), currentUserData.authToken());
                 sf.joinGame(request);
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
             }

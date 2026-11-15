@@ -88,11 +88,15 @@ public class Server {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             String authToken = ctx.header("authorization");
             var auth = getAuthData(authToken);
+            if (joinGameInput.playerColor() == null) {
+                ctx.status(400).result(serializer.toJson(Map.of("message", "Error: no team color provided")));
+                return;
+            }
             if (auth == null) {
                 ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
-            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), auth.username(), authToken);
+            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor().toUpperCase(), auth.username(), authToken);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
         });
     }

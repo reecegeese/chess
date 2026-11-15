@@ -128,4 +128,26 @@ public class ServerFacadeTests {
                 () -> sf.listGames("Bad authToken")
         );
     }
+
+    @Test
+    @Order(10)
+    @DisplayName("Good Join Game")
+    void goodJoinGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
+        JoinGameRequest joinGameRequest = new JoinGameRequest(result.gameID(), "white", "player2", logInResult.authToken());
+        sf.joinGame(joinGameRequest);
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Bad Join Game")
+    void badJoinGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
+        JoinGameRequest joinGameRequest = new JoinGameRequest(result.gameID(), null, "player2", logInResult.authToken());
+        assertThrows(BadRequestException.class,
+                () -> sf.joinGame(joinGameRequest)
+        );
+    }
 }
