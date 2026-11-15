@@ -50,7 +50,7 @@ public class ServerFacade {
     public void listGames(String authToken) throws Exception {
         var request = buildRequest("GET", "/game", authToken);
         var response = sendRequest(request);
-        handleResponse(response, List.class);
+        handleResponse(response, ListGamesResult.class);
     }
 
     public void joinGame(JoinRequest request) throws ResponseException {

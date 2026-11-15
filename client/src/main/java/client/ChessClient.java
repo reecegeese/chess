@@ -105,10 +105,10 @@ public class ChessClient {
         try {
             assertSignedIn();
             sf.listGames(currentUserData.authToken());
-            return "";
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
+        return "";
     }
 
     public String joinGame(String... params) throws Exception {

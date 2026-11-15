@@ -116,4 +116,16 @@ public class ServerFacadeTests {
         sf.createGame(createRequest);
         sf.listGames(createRequest.authToken());
     }
+
+    @Test
+    @Order(9)
+    @DisplayName("Bad List Games")
+    void badListGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        CreateGameRequest createRequest = new CreateGameRequest("testGame", logInResult.authToken());
+        sf.createGame(createRequest);
+        assertThrows(UnauthorizedException.class,
+                () -> sf.listGames("Bad authToken")
+        );
+    }
 }
