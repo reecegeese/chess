@@ -1,6 +1,5 @@
 package client;
 
-import client.exceptions.ResponseException;
 import client.model.*;
 import model.*;
 import dataaccess.*;
