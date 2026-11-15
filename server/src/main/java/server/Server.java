@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import services.DeleteService;
 import services.GameService;
 import services.UserService;
+import static dataaccess.sql.SQLAuthDataAccess.getAuthData;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import java.util.Map;
 public class Server {
     private final Javalin javalin;
     private final Gson serializer = new Gson();
-    private String currentUsername = "";
 
     public Server() {
         try {
@@ -46,14 +46,14 @@ public class Server {
         javalin.post("/user", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.registerUser(user);
-            currentUsername = user.username();
+            String currentUsername = user.username();
             ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.loginUser(user);
-            currentUsername = user.username();
+            String currentUsername = user.username();
             ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
@@ -61,7 +61,6 @@ public class Server {
             try {
                 String authToken = ctx.header("authorization");
                 UserService.logoutUser(authToken);
-                currentUsername = "";
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
@@ -88,7 +87,12 @@ public class Server {
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
             String authToken = ctx.header("authorization");
-            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), currentUsername, authToken);
+            var auth = getAuthData(authToken);
+            if (auth == null) {
+                ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
+                return;
+            }
+            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), auth.username(), authToken);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
         });
     }

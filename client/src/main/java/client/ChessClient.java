@@ -166,10 +166,6 @@ public class ChessClient {
         }
     }
 
-    public void notify(Notification notification) {
-        System.out.println(SET_TEXT_COLOR_RED + notification.message());
-    }
-
     private void printPrompt() {
         System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_GREEN);
     }

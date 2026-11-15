@@ -62,7 +62,7 @@ public class SQLAuthDataAccess {
         //DataAccess -> Database
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            String findToken = "SELECT 1 FROM authData WHERE authToken = ?";
+            String findToken = "SELECT authToken, username FROM authData WHERE authToken = ?";
             try (var findStatement = conn.prepareStatement(findToken)) {
                 findStatement.setString(1, authToken);
                 try (var returnStatement = findStatement.executeQuery()) {
