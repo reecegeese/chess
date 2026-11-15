@@ -84,6 +84,7 @@ public class ServerFacadeTests {
     @Order(6)
     @DisplayName("Bad Logout")
     void badLogOut() throws Exception {
+        sf.logOut(loggedInUser);
         assertThrows(UnauthorizedException.class,
                 () -> sf.logOut(loggedInUser)
         );

@@ -59,8 +59,8 @@ public class Server {
         });
         javalin.delete("/session", (ctx)-> {
             try {
-                String[] headerParts = getHeaderParts(ctx.header("authorization"));
-                UserService.logoutUser(headerParts[1]);
+                String authToken = ctx.header("authorization");
+                UserService.logoutUser(authToken);
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));

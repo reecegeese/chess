@@ -36,11 +36,7 @@ public class ServerFacade {
 
     public void logOut(RegisterResult userData) throws Exception {
         var request = buildRequest("DELETE", "/session", userData);
-        System.out.println(userData);
-        System.out.println("headers: " + request.headers().map());
         var response = sendRequest(request);
-        System.out.println("status: " + response.statusCode());
-        System.out.println("body: " + response.body());
         handleResponse(response, null);
     }
 
