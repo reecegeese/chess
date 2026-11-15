@@ -17,7 +17,7 @@ import java.util.Map;
 public class Server {
     private final Javalin javalin;
     private final Gson serializer = new Gson();
-    private String currentUsername;
+    String currentUsername = "nonsenseUsERName";
 
     public Server() {
         try {
@@ -47,13 +47,13 @@ public class Server {
         javalin.post("/user", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.registerUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
+            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
                     , "authToken", authToken)));
         });
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.loginUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
+            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
                     , "authToken", authToken)));
         });
         javalin.delete("/session", (ctx)-> {
@@ -85,8 +85,16 @@ public class Server {
         });
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
+            System.out.println("input = " + joinGameInput);
             String authToken = ctx.header("authorization");
-            currentUsername = getAuthData(authToken).username();
+            System.out.println("authToken = " + authToken);
+            try {
+                currentUsername = getAuthData(authToken).username();
+            } catch (NullPointerException e) {
+                currentUsername = null;
+            }
+            System.out.println("authData = " + getAuthData(authToken));
+            System.out.println(currentUsername);
             GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), currentUsername, authToken);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
         });
