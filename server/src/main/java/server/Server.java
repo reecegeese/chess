@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import services.DeleteService;
 import services.GameService;
 import services.UserService;
-import static dataaccess.sql.SQLAuthDataAccess.getAuthData;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class Server {
     private final Javalin javalin;
     private final Gson serializer = new Gson();
-    String currentUsername = "nonsenseUsERName";
+    private String currentUsername = "";
 
     public Server() {
         try {
@@ -47,19 +46,22 @@ public class Server {
         javalin.post("/user", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.registerUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
+            currentUsername = user.username();
+            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.loginUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
+            currentUsername = user.username();
+            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
         javalin.delete("/session", (ctx)-> {
             try {
                 String authToken = ctx.header("authorization");
                 UserService.logoutUser(authToken);
+                currentUsername = "";
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
@@ -85,16 +87,7 @@ public class Server {
         });
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
-            System.out.println("input = " + joinGameInput);
             String authToken = ctx.header("authorization");
-            System.out.println("authToken = " + authToken);
-            try {
-                currentUsername = getAuthData(authToken).username();
-            } catch (NullPointerException e) {
-                currentUsername = null;
-            }
-            System.out.println("authData = " + getAuthData(authToken));
-            System.out.println(currentUsername);
             GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), currentUsername, authToken);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
         });

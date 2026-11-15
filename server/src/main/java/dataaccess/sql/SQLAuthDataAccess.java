@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
 import dataaccess.*;
-import model.*;
+import model.AuthData;
 
 import static dataaccess.DatabaseManager.*;
 import static dataaccess.DatabaseManager.databaseName;

@@ -35,7 +35,6 @@ public class ServerFacade {
     }
 
     public void logOut(RegisterResult userData) throws Exception {
-        System.out.println("Log out");
         var request = buildRequest("DELETE", "/session", userData);
         var response = sendRequest(request);
         handleResponse(response, null);
