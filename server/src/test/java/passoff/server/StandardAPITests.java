@@ -142,6 +142,7 @@ public class StandardAPITests {
     @DisplayName("Normal Logout")
     public void logoutSuccess() {
         //log out existing user
+        System.out.println(existingAuth);
         TestResult result = serverFacade.logout(existingAuth);
         assertHttpOk(result);
     }
