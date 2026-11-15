@@ -3,26 +3,21 @@ package client;
 import client.exceptions.ResponseException;
 import client.model.*;
 import model.*;
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
+import services.*;
 import org.junit.jupiter.api.*;
 import server.Server;
-import services.DeleteService;
-import services.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 public class ServerFacadeTests {
     private static Server server;
     static ServerFacade sf;
     private static RegisterRequest existingUser;
-    private static RegisterRequest existingResult;
-    private static String existingAuthToken;
+    private static RegisterResult loggedInUser;
 
     @BeforeAll
-    public static void init() throws ResponseException {
+    public static void init() throws Exception {
         server = new Server();
         var port = server.run(0);
         sf = new ServerFacade("http://localhost:" + port);
@@ -31,10 +26,10 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-    public void setup() throws ResponseException {
+    public void setup() throws Exception {
         DeleteService.deleteService();
         //one user already logged in
-        sf.register(existingUser);
+        loggedInUser = sf.register(existingUser);
     }
 
     @AfterAll
@@ -71,7 +66,7 @@ public class ServerFacadeTests {
     @DisplayName("Bad Login User")
     void badLogIn() {
         assertThrows(
-                IllegalArgumentException.class,
+                UnauthorizedException.class,
                 () -> {
                     sf.logIn(new LogInRequest("player2", "noThanks"));
                 }
@@ -82,17 +77,15 @@ public class ServerFacadeTests {
     @Order(5)
     @DisplayName("Good Logout")
     void goodLogOut() throws Exception {
-        sf.logIn(new LogInRequest("player2", "1234"));
-        sf.logOut();
+        sf.logOut(loggedInUser);
     }
 
     @Test
     @Order(6)
     @DisplayName("Bad Logout")
     void badLogOut() throws Exception {
-        sf.logOut();
-        assertThrows(ResponseException.class,
-                () -> sf.logOut()
+        assertThrows(UnauthorizedException.class,
+                () -> sf.logOut(loggedInUser)
         );
     }
 
@@ -103,5 +96,16 @@ public class ServerFacadeTests {
         RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
         GameData result = sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()));
         assertEquals("testGame", result.gameName());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Bad Create Game")
+    void badCreateGame() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        sf.logOut(loggedInUser);
+        assertThrows(ResponseException.class,
+                () -> sf.createGame(new CreateGameRequest("testGame", logInResult.authToken()))
+        );
     }
 }

@@ -1,5 +1,7 @@
 package dataaccess;
 
+import java.sql.SQLException;
+
 /**
  * Indicates user is unauthorized
  */

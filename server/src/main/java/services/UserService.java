@@ -44,6 +44,7 @@ public class UserService {
     public static void logoutUser(String authToken) throws UnauthorizedException{
         //Service -> DataAccess
         if (SQLAuthDataAccess.findAuthToken(authToken)) {
+            System.out.println("Found auth token");
             //Service -> DataAccess
             SQLAuthDataAccess.deleteAuthToken(authToken);
             return;

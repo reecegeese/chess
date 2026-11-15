@@ -3,6 +3,7 @@ package dataaccess.sql;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
+import dataaccess.*;
 
 import static dataaccess.DatabaseManager.*;
 import static dataaccess.DatabaseManager.databaseName;

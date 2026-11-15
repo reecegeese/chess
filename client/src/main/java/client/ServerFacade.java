@@ -2,10 +2,12 @@ package client;
 
 import client.exceptions.*;
 import client.model.*;
+import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
+import dataaccess.UnauthorizedException;
 import model.*;
 import com.google.gson.Gson;
 
-import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
@@ -20,24 +22,29 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResult register(RegisterRequest userData) throws ResponseException {
+    public RegisterResult register(RegisterRequest userData) throws Exception {
         var request = buildRequest("POST", "/user", userData);
         var response = sendRequest(request);
         return handleResponse(response, RegisterResult.class);
     }
 
-    public RegisterResult logIn(LogInRequest userData) throws ResponseException {
+    public RegisterResult logIn(LogInRequest userData) throws Exception {
         var request = buildRequest("POST", "/session", userData);
         var response = sendRequest(request);
         return handleResponse(response, RegisterResult.class);
     }
 
-    public void logOut() throws ResponseException {
-        var request = buildRequest("DELETE", "/session", "");
-        sendRequest(request);
+    public void logOut(RegisterResult userData) throws Exception {
+        var request = buildRequest("DELETE", "/session", userData);
+        System.out.println(userData);
+        System.out.println("headers: " + request.headers().map());
+        var response = sendRequest(request);
+        System.out.println("status: " + response.statusCode());
+        System.out.println("body: " + response.body());
+        handleResponse(response, null);
     }
 
-    public GameData createGame(CreateGameRequest createRequest) throws ResponseException {
+    public GameData createGame(CreateGameRequest createRequest) throws Exception {
         var request = buildRequest("POST", "/game", createRequest);
         var response = sendRequest(request);
         return handleResponse(response, GameData.class);
@@ -60,15 +67,7 @@ public class ServerFacade {
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
-            request.setHeader("Content-Type", "application/json");   // was setHeader
-        }
-        String authToken = null;
-        String text = body.toString();
-        if (!text.contains("password=")) {
-            authToken = text.replaceAll(".*authToken=([^],]*).*", "$1");
-        }
-       if (authToken != null) {
-            request.header("Authorization", authToken);
+            request.setHeader("Content-Type", "application/json");
         }
         return request.build();
     }
@@ -89,16 +88,22 @@ public class ServerFacade {
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws Exception {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw switch (status) {
+                case 400 -> new BadRequestException(serverUrl);
+                case 401 -> new UnauthorizedException(serverUrl);
+                case 403 -> new AlreadyTakenException(serverUrl);
+                default  -> throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            };
         }
         if (responseClass != null) {
             return new Gson().fromJson(response.body(), responseClass);
         }
         return null;
     }
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }

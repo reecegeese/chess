@@ -9,7 +9,7 @@ public class ResponseException extends Exception {
 
     public enum Code {
         ServerError,
-        ClientError,
+        ClientError
     }
 
     final private Code code;

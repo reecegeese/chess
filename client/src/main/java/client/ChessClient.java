@@ -7,12 +7,13 @@ import client.model.*;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
-    private String visitorName;
     private final ServerFacade sf;
+    private RegisterResult currentUserData;
     private State state = State.LOGGEDOUT;
 
     public ChessClient(String serverUrl) {
         sf = new ServerFacade(serverUrl);
+        currentUserData = new RegisterResult(null, null);
     }
 
     public void run() {
@@ -42,7 +43,7 @@ public class ChessClient {
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> logIn(params);
-                case "logout" -> logOut();
+                case "logout" -> logOut(currentUserData);
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
@@ -50,43 +51,45 @@ public class ChessClient {
                 case "quit" -> "quit";
                 default -> help();
             };
-        } catch (ResponseException ex) {
+        } catch (Exception ex) {
             return ex.getMessage();
         }
     }
 
-    public String register(String... params) throws ResponseException {
+    public String register(String... params) throws Exception {
         if (params.length == 3) {
             RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
             RegisterResult result = sf.register(request);
+            currentUserData = result;
             state = State.LOGGEDIN;
             return String.format("You have registered as %s.", result.username());
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: register <USERNAME>, <PASSWORD>, <EMAIL>");
     }
 
-    public String logIn(String... params) throws ResponseException {
+    public String logIn(String... params) throws Exception {
         if (params.length == 2) {
             LogInRequest request = new LogInRequest(params[0], params[1]);
             RegisterResult result = sf.logIn(request);
+            currentUserData = result;
             state = State.LOGGEDIN;
             return String.format("You have logged in as %s.", result.username());
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: logIn <USERNAME>, <PASSWORD>");
     }
 
-    public String logOut() throws ResponseException {
+    public String logOut(RegisterResult currentUserData) throws Exception {
         try {
             assertSignedIn();
-            sf.logOut();
+            sf.logOut(currentUserData);
             state = State.LOGGEDOUT;
             return "You have logged out";
-        } catch (ResponseException ex) {
+        } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
         }
     }
 
-    public String createGame(String... params) throws ResponseException {
+    public String createGame(String... params) throws Exception {
         if (state == State.LOGGEDOUT) {
             throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }
@@ -98,7 +101,7 @@ public class ChessClient {
         throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
     }
 
-    public String listGames() throws ResponseException {
+    public String listGames() throws Exception {
         try {
             assertSignedIn();
             sf.listGames();
@@ -108,7 +111,7 @@ public class ChessClient {
         }
     }
 
-    public String joinGame(String... params) throws ResponseException {
+    public String joinGame(String... params) throws Exception {
         try {
             assertSignedIn();
             if (params.length == 2) {
@@ -122,7 +125,7 @@ public class ChessClient {
         return "You are not signed in";
     }
 
-    public String observeGame(String... params) throws ResponseException {
+    public String observeGame(String... params) throws Exception {
         try {
             assertSignedIn();
             if (params.length == 1) {
@@ -156,7 +159,7 @@ public class ChessClient {
                 """;
     }
 
-    private void assertSignedIn() throws ResponseException {
+    private void assertSignedIn() throws Exception {
         if (state == State.LOGGEDOUT) {
             throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }

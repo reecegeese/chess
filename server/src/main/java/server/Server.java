@@ -73,6 +73,9 @@ public class Server {
         javalin.post("/game", (ctx)-> {
             GameData gameName = serializer.fromJson(ctx.body(), GameData.class);
             GameData gameData = GameService.createGame(gameName.gameName(), ctx.header("authorization"));
+            if (ctx.header("authorization") == null) {
+                throw new UnauthorizedException("Error: unauthorized");
+            }
             ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID(),
                     "gameName", gameData.gameName())));
         });
