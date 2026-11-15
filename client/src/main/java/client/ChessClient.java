@@ -83,7 +83,6 @@ public class ChessClient {
             assertSignedIn();
             sf.logOut(currentUserData);
             state = State.LOGGEDOUT;
-            currentUserData = new RegisterResult(null, null);
             return "You have logged out";
         } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");
@@ -105,7 +104,7 @@ public class ChessClient {
     public String listGames() throws Exception {
         try {
             assertSignedIn();
-            sf.listGames();
+            sf.listGames(currentUserData.authToken());
             return "";
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not signed in");

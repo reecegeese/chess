@@ -101,9 +101,19 @@ public class ServerFacadeTests {
     @Test
     @Order(8)
     @DisplayName("Bad Create Game")
-    void badCreateGame() throws Exception {
+    void badCreateGame() {
         assertThrows(UnauthorizedException.class,
                 () -> sf.createGame(new CreateGameRequest("testGame", "bad token"))
         );
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Good List Games")
+    void goodListGames() throws Exception {
+        RegisterResult logInResult = sf.logIn(new LogInRequest("player2", "1234"));
+        CreateGameRequest createRequest = new CreateGameRequest("testGame", logInResult.authToken());
+        sf.createGame(createRequest);
+        sf.listGames(createRequest.authToken());
     }
 }
