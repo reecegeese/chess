@@ -68,6 +68,11 @@ public class ServerFacade {
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+            if (!body.toString().contains("authorization=")) {
+                String stringBody = body.toString();
+                String authToken = stringBody.replaceAll(".*authToken=([^],]*).*", "$1");
+                request.header("authorization", authToken);
+            }
         }
         return request.build();
     }
