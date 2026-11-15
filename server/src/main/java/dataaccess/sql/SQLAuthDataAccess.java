@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
 import dataaccess.*;
+import model.*;
 
 import static dataaccess.DatabaseManager.*;
 import static dataaccess.DatabaseManager.databaseName;
@@ -50,6 +51,26 @@ public class SQLAuthDataAccess {
                 findStatement.setString(1, authToken);
                 try (var returnStatement = findStatement.executeQuery()) {
                     return returnStatement.next();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static public AuthData getAuthData(String authToken) {
+        //DataAccess -> Database
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
+            conn.setCatalog(databaseName);
+            String findToken = "SELECT 1 FROM authData WHERE authToken = ?";
+            try (var findStatement = conn.prepareStatement(findToken)) {
+                findStatement.setString(1, authToken);
+                try (var returnStatement = findStatement.executeQuery()) {
+                    if (returnStatement.next()) {
+                        return new AuthData(returnStatement.getString("authToken"),
+                                returnStatement.getString("username"));
+                    }
+                    return null;
                 }
             }
         } catch (SQLException e) {
