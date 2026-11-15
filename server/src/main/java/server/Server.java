@@ -14,11 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Server {
-
     private final Javalin javalin;
-
     private final Gson serializer = new Gson();
-
+    private String currentUsername = "";
 
     public Server() {
         try {
@@ -48,19 +46,22 @@ public class Server {
         javalin.post("/user", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.registerUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
+            currentUsername = user.username();
+            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
         javalin.post("/session", (ctx)-> {
             UserData user = serializer.fromJson(ctx.body(), UserData.class);
             String authToken = UserService.loginUser(user);
-            ctx.status(200).result(serializer.toJson(Map.of("username", user.username()
+            currentUsername = user.username();
+            ctx.status(200).result(serializer.toJson(Map.of("username", currentUsername
                     , "authToken", authToken)));
         });
         javalin.delete("/session", (ctx)-> {
             try {
                 String authToken = ctx.header("authorization");
                 UserService.logoutUser(authToken);
+                currentUsername = "";
                 ctx.status(200).result("");
             } catch  /*Server <- Handler*/ (UnauthorizedException e){
                 String resultJson = serializer.toJson(Map.of("message", "Error: already taken"));
@@ -80,14 +81,14 @@ public class Server {
                     "gameName", gameData.gameName())));
         });
         javalin.get("/game", (ctx)-> {
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
-            List<GameData> games = GameService.listGames(headerParts[1]);
+            String authToken = ctx.header("authorization");
+            List<GameData> games = GameService.listGames(authToken);
             ctx.status(200).result(serializer.toJson(Map.of("games", games)));
         });
         javalin.put("/game", (ctx)-> {
             JoinGameInput joinGameInput = serializer.fromJson(ctx.body(), JoinGameInput.class);
-            String[] headerParts = getHeaderParts(ctx.header("authorization"));
-            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), headerParts[0], headerParts[1]);
+            String authToken = ctx.header("authorization");
+            GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor(), currentUsername, authToken);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
         });
     }
