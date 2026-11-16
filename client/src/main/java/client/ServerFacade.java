@@ -59,12 +59,6 @@ public class ServerFacade {
         handleResponse(response, GameData.class);
     }
 
-    public void observeGame(JoinGameRequest joinGameRequest) throws Exception {
-        var request = buildRequest("PUT", "/game", joinGameRequest);
-        var response = sendRequest(request);
-        handleResponse(response, GameData.class);
-    }
-
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
@@ -100,9 +94,9 @@ public class ServerFacade {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             throw switch (status) {
-                case 400 -> new BadRequestException(serverUrl);
-                case 401 -> new UnauthorizedException(serverUrl);
-                case 403 -> new AlreadyTakenException(serverUrl);
+                case 400 -> new BadRequestException("Error: Bad Request");
+                case 401 -> new UnauthorizedException("Error: Unauthorized");
+                case 403 -> new AlreadyTakenException("Error: Already Taken");
                 default  -> throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
             };
         }

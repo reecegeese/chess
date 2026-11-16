@@ -92,7 +92,6 @@ public class SQLUnitTests {
         Assertions.assertNull(createResult.whiteUsername());
         Assertions.assertNull(createResult.blackUsername());
         Assertions.assertEquals("testGame", createResult.gameName());
-        Assertions.assertNull(createResult.game());
     }
 
     @Test

@@ -1,11 +1,9 @@
 package services;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import dataaccess.UnauthorizedException;
-import dataaccess.sql.SQLAuthDataAccess;
-import dataaccess.sql.SQLGameDataAccess;
-import model.GameData;
+import chess.*;
+import dataaccess.*;
+import dataaccess.sql.*;
+import model.*;
 
 import java.util.Objects;
 import java.util.Random;
@@ -24,8 +22,9 @@ public class GameService {
             //Service -> DataAccess
             Random rand = new Random();
             int gameID = rand.nextInt(9000) + 1000;
-            GameData currentGame = new GameData(gameID, null, null, gameName, null);
-            SQLGameDataAccess.addGameData(gameID, null, null, gameName, null);
+            ChessGame newBoard = new ChessGame();
+            GameData currentGame = new GameData(gameID, null, null, gameName, newBoard);
+            SQLGameDataAccess.addGameData(gameID, null, null, gameName, newBoard);
             return currentGame;
         }
         throw new UnauthorizedException("Error: unauthorized");
