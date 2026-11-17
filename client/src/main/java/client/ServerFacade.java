@@ -13,7 +13,6 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.URI;
-import java.util.List;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -47,10 +46,10 @@ public class ServerFacade {
         return handleResponse(response, GameData.class);
     }
 
-    public void listGames(String authToken) throws Exception {
+    public ListGamesResult listGames(String authToken) throws Exception {
         var request = buildRequest("GET", "/game", authToken);
         var response = sendRequest(request);
-        handleResponse(response, ListGamesResult.class);
+        return handleResponse(response, ListGamesResult.class);
     }
 
     public void joinGame(JoinGameRequest joinGameRequest) throws Exception {

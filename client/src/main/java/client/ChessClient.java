@@ -16,6 +16,10 @@ public class ChessClient {
     private final ServerFacade sf;
     private RegisterResult currentUserData;
     private State state = State.LOGGEDOUT;
+    public sealed interface EvalResult {
+        record EvalString(String text) implements EvalResult {}
+        record EvalList(ListGamesResult list) implements EvalResult {}
+    }
 
     public ChessClient(String serverUrl) {
         sf = new ServerFacade(serverUrl);
@@ -26,13 +30,19 @@ public class ChessClient {
         System.out.println("♕ Welcome to 240 Chess. Type Help to get started ♕");
         System.out.print(help());
         Scanner scanner = new Scanner(System.in);
-        var result = "";
+        EvalResult result = new EvalResult.EvalString("");
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
+            result = eval(line);
             try {
-                result = eval(line);
-                System.out.print(SET_TEXT_COLOR_GREEN + result);
+                switch (result) {
+                    case EvalResult.EvalString s -> System.out.println(s.text());
+                    case EvalResult.EvalList l    -> { System.out.println("Games: ");
+                        for (var game : l.list().games()) {
+                        System.out.println(game.gameName()); }
+                    }
+                }
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(msg);
@@ -41,24 +51,24 @@ public class ChessClient {
         System.out.println();
     }
 
-    public String eval(String input) {
+    public EvalResult eval(String input) {
         try {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> register(params);
-                case "login" -> logIn(params);
-                case "logout" -> logOut(currentUserData);
-                case "create" -> createGame(params);
-                case "list" -> listGames();
-                case "join" -> joinGame(params);
-                case "observe" -> observeGame(params);
-                case "quit" -> "quit";
-                default -> help();
+                case "register" -> new EvalResult.EvalString(register(params));
+                case "login" -> new EvalResult.EvalString(logIn(params));
+                case "logout" -> new EvalResult.EvalString(logOut(currentUserData));
+                case "create" -> new EvalResult.EvalString(createGame(params));
+                case "list" -> new EvalResult.EvalList(listGames());
+                case "join" -> new EvalResult.EvalString(joinGame(params));
+                case "observe" -> new EvalResult.EvalString(observeGame(params));
+                case "quit" -> new EvalResult.EvalString("quit");
+                default -> new EvalResult.EvalString(help());
             };
         } catch (Exception ex) {
-            return ex.getMessage();
+            return new EvalResult.EvalString(ex.getMessage());
         }
     }
 
@@ -79,9 +89,7 @@ public class ChessClient {
         }
         if (params.length == 2) {
             LogInRequest request = new LogInRequest(params[0], params[1]);
-            System.out.println("Here 1");
             RegisterResult result = sf.logIn(request);
-            System.out.println("Goal");
             currentUserData = result;
             state = State.LOGGEDIN;
             return String.format("You have logged in as %s.", result.username());
@@ -113,14 +121,13 @@ public class ChessClient {
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: create <GAME NAME>");
     }
 
-    public String listGames() throws Exception {
+    public ListGamesResult listGames() throws Exception {
         try {
             assertSignedIn();
-            sf.listGames(currentUserData.authToken());
+            return sf.listGames(currentUserData.authToken());
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not logged in");
         }
-        return "You are not logged in";
     }
 
     public String joinGame(String... params) throws Exception {
