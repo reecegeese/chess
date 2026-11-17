@@ -38,9 +38,8 @@ public class ChessClient {
             try {
                 switch (result) {
                     case EvalResult.EvalString s -> System.out.println(s.text());
-                    case EvalResult.EvalList l    -> { System.out.println("Games: ");
-                        for (var game : l.list().games()) {
-                        System.out.println(game.gameName()); }
+                    case EvalResult.EvalList l    -> { for (var game : l.list().games()) {
+                        System.out.println("Name: " + game.gameName() + " - ID: " + game.gameID()); }
                     }
                 }
             } catch (Throwable e){
@@ -137,6 +136,10 @@ public class ChessClient {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, params[1], currentUserData.username(), currentUserData.authToken());
                 sf.joinGame(request);
+                ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(request.playerColor().toUpperCase());
+                GameData currentGame = getGameData(gameID);
+                ChessGame board = currentGame.game();
+                printBoard(board.getBoard(), teamColor);
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
             }
         } catch (ResponseException ex) {
@@ -152,6 +155,9 @@ public class ChessClient {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, "watch", currentUserData.username(), currentUserData.authToken());
                 sf.joinGame(request);
+                GameData currentGame = getGameData(gameID);
+                ChessGame board = currentGame.game();
+                printBoard(board.getBoard(), WHITE);
                 return String.format("You are observing the game %s", params[0]);
             }
         } catch (ResponseException ex) {
