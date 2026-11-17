@@ -44,7 +44,6 @@ public class ChessClient {
                 System.out.print(msg);
             }
         }
-        System.out.println();
     }
 
     public void clientListGames(EvalResult.EvalList l) {
@@ -136,7 +135,8 @@ public class ChessClient {
             if (params.length == 2) {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, params[1], currentUserData.username(), currentUserData.authToken());
-                sf.joinGame(request);
+                CreateResult result = sf.joinGame(request);
+                printBoard(result.board(), WHITE);
                 ChessGame.TeamColor.valueOf(request.playerColor().toUpperCase());
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
             }
@@ -152,7 +152,9 @@ public class ChessClient {
             if (params.length == 1) {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, "watch", currentUserData.username(), currentUserData.authToken());
-                sf.joinGame(request);
+                CreateResult result = sf.joinGame(request);
+                printBoard(result.board(), WHITE);
+                ChessGame.TeamColor.valueOf(request.playerColor().toUpperCase());
                 return String.format("You are observing game %s", params[0]);
             }
         } catch (ResponseException ex) {
@@ -228,7 +230,7 @@ public class ChessClient {
             return EMPTY;
         }
         return switch (piece.getTeamColor()) {
-            case WHITE -> switch (piece.getPieceType()) {
+            case WHITE, WATCH-> switch (piece.getPieceType()) {
                 case KING -> WHITE_KING;
                 case QUEEN -> WHITE_QUEEN;
                 case BISHOP -> WHITE_BISHOP;

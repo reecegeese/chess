@@ -95,7 +95,8 @@ public class Server {
             }
             GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor().toUpperCase(), auth.username(), authToken);
             GameData gameData = getGameData(joinGameInput.gameID());
-            ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID(), "board", gameData.game().getBoard())));
+            ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID(),
+                    "gameName", gameData.gameName(), "board", gameData.game().getBoard())));
         });
     }
 
