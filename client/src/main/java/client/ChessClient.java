@@ -37,9 +37,7 @@ public class ChessClient {
             try {
                 switch (result) {
                     case EvalResult.EvalString s -> System.out.println(s.text());
-                    case EvalResult.EvalList l    -> { for (var game : l.list().games()) {
-                        System.out.println("Name: " + game.gameName() + " - ID: " + game.gameID()); }
-                    }
+                    case EvalResult.EvalList l    -> clientListGames(l);
                 }
             } catch (Throwable e){
                 var msg = e.toString();
@@ -47,6 +45,12 @@ public class ChessClient {
             }
         }
         System.out.println();
+    }
+
+    public void clientListGames(EvalResult.EvalList l) {
+        for (var game : l.list().games()) {
+            System.out.println("Name: " + game.gameName() + " - ID: " + game.gameID());
+        }
     }
 
     public EvalResult eval(String input) {
