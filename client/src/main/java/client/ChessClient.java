@@ -158,7 +158,7 @@ public class ChessClient {
                 GameData currentGame = getGameData(gameID);
                 ChessGame board = currentGame.game();
                 printBoard(board.getBoard(), WHITE);
-                return String.format("You are observing the game %s", params[0]);
+                return String.format("You are observing game %s", params[0]);
             }
         } catch (ResponseException ex) {
             throw new ResponseException(ResponseException.Code.ClientError, "You are not logged in");
@@ -197,23 +197,35 @@ public class ChessClient {
     }
 
     private void printBoard(ChessBoard board, ChessGame.TeamColor teamColor) {
+        boolean isWhite = teamColor == WHITE;
         String[] columns = {"a", "b", "c", "d", "e", "f", "g", "h"};
-        String[] rows = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        boolean isWhite;
-        isWhite = teamColor == WHITE;
+        printHeader(columns, isWhite);
+        boolean once = true;
         for (int i=0; i<8 ; i++) {
             int row = isWhite ? 1 + i : 8 - i;
+            int column = isWhite ? 1 + i : 8 - i;
             System.out.print(SET_BG_COLOR_DARK_GREY + " " + row + " " + RESET_BG_COLOR);
             for (int j=0; j<8 ; j++) {
-                int column = isWhite ? 1 + i : 8 - i;
-                System.out.print(SET_BG_COLOR_DARK_GREY + " " + column + " " + RESET_BG_COLOR);
                 boolean lightSquare = (row + column) % 2 == 1;
                 String bg = lightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
-                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
+                ChessPiece piece = board.getPiece(new ChessPosition(i+1, j+1));
                 System.out.print(bg + pieceIcon(piece) + RESET_BG_COLOR);
             }
             System.out.println(SET_BG_COLOR_DARK_GREY + " " + row + " " + RESET_BG_COLOR);
         }
+        printHeader(columns, isWhite);
+    }
+
+    private void printHeader(String[] columns, boolean isWhite) {
+        System.out.print(SET_BG_COLOR_DARK_GREY + "   " + RESET_BG_COLOR);
+        for (int n = 0; n < 8; n++) {
+            String letter = isWhite ? columns[n] : columns[7 - n];
+            System.out.print(SET_BG_COLOR_DARK_GREY + " " + letter + " " + RESET_BG_COLOR);
+            if (n==0 || n==2 || n==3 || n==5 || n==6) {
+                System.out.print(SET_BG_COLOR_DARK_GREY + " " + RESET_BG_COLOR);
+            }
+        }
+        System.out.print(SET_BG_COLOR_DARK_GREY + "   " + RESET_BG_COLOR + "\n");
     }
 
     private static String pieceIcon(ChessPiece piece) {
