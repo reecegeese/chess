@@ -9,7 +9,6 @@ import client.model.*;
 import model.*;
 
 import static chess.ChessGame.TeamColor.*;
-import static dataaccess.sql.SQLGameDataAccess.*;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
@@ -111,10 +110,7 @@ public class ChessClient {
         assertSignedIn();
         if (params.length == 1) {
             CreateGameRequest request = new CreateGameRequest(params[0], currentUserData.authToken());
-            GameData gameData = sf.createGame(request);
-            GameData currentGame = getGameData(gameData.gameID());
-            ChessGame board = currentGame.game();
-            printBoard(board.getBoard(), WHITE);
+            sf.createGame(request);
             return String.format("You have created the game %s.", params[0]);
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: create <GAME NAME>");
@@ -136,10 +132,7 @@ public class ChessClient {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, params[1], currentUserData.username(), currentUserData.authToken());
                 sf.joinGame(request);
-                ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(request.playerColor().toUpperCase());
-                GameData currentGame = getGameData(gameID);
-                ChessGame board = currentGame.game();
-                printBoard(board.getBoard(), teamColor);
+                ChessGame.TeamColor.valueOf(request.playerColor().toUpperCase());
                 return String.format("You have joined the game %s as %s", params[0], params[1]);
             }
         } catch (ResponseException ex) {
@@ -155,9 +148,6 @@ public class ChessClient {
                 int gameID = Integer.parseInt(params[0]);
                 JoinGameRequest request = new JoinGameRequest(gameID, "watch", currentUserData.username(), currentUserData.authToken());
                 sf.joinGame(request);
-                GameData currentGame = getGameData(gameID);
-                ChessGame board = currentGame.game();
-                printBoard(board.getBoard(), WHITE);
                 return String.format("You are observing game %s", params[0]);
             }
         } catch (ResponseException ex) {
