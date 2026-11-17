@@ -2,9 +2,6 @@ package client;
 
 import client.exceptions.*;
 import client.model.*;
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import dataaccess.UnauthorizedException;
 import model.*;
 import com.google.gson.Gson;
 

@@ -2,7 +2,7 @@ package client;
 
 import client.model.*;
 import model.*;
-import dataaccess.*;
+import client.exceptions.*;
 import services.*;
 import org.junit.jupiter.api.*;
 import server.Server;
