@@ -2,14 +2,11 @@ package server;
 
 import dataaccess.*;
 import io.javalin.*;
-import model.GameData;
-import model.JoinGameInput;
-import model.UserData;
+import model.*;
 import com.google.gson.Gson;
-import services.DeleteService;
-import services.GameService;
-import services.UserService;
-import static dataaccess.sql.SQLAuthDataAccess.getAuthData;
+import services.*;
+import static dataaccess.sql.SQLAuthDataAccess.*;
+import static dataaccess.sql.SQLGameDataAccess.*;
 
 import java.util.List;
 import java.util.Map;
@@ -77,7 +74,7 @@ public class Server {
                 throw new UnauthorizedException("Error: unauthorized");
             }
             ctx.status(200).result(serializer.toJson(Map.of("gameID", gameData.gameID(),
-                    "gameName", gameData.gameName())));
+                    "gameName", gameData.gameName(), "board", gameData.game().getBoard())));
         });
         javalin.get("/game", (ctx)-> {
             String authToken = ctx.header("authorization");
@@ -97,7 +94,8 @@ public class Server {
                 return;
             }
             GameService.joinGame(joinGameInput.gameID(), joinGameInput.playerColor().toUpperCase(), auth.username(), authToken);
-            ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID())));
+            GameData gameData = getGameData(joinGameInput.gameID());
+            ctx.status(200).result(serializer.toJson(Map.of("gameID", joinGameInput.gameID(), "board", gameData.game().getBoard())));
         });
     }
 

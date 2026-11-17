@@ -114,7 +114,8 @@ public class ChessClient {
         assertSignedIn();
         if (params.length == 1) {
             CreateGameRequest request = new CreateGameRequest(params[0], currentUserData.authToken());
-            sf.createGame(request);
+            CreateResult result = sf.createGame(request);
+            printBoard(result.board(), WHITE);
             return String.format("You have created the game %s.", params[0]);
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: create <GAME NAME>");

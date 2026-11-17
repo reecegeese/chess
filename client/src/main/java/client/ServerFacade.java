@@ -37,10 +37,10 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
-    public GameData createGame(CreateGameRequest createRequest) throws Exception {
+    public CreateResult createGame(CreateGameRequest createRequest) throws Exception {
         var request = buildRequest("POST", "/game", createRequest);
         var response = sendRequest(request);
-        return handleResponse(response, GameData.class);
+        return handleResponse(response, CreateResult.class);
     }
 
     public ListGamesResult listGames(String authToken) throws Exception {
